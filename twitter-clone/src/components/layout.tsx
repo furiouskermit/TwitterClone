@@ -1,5 +1,7 @@
-import { Link, Outlet } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { auth } from "../firebase";
 
 const Wrapper = styled.div`
     display: flex;
@@ -24,6 +26,14 @@ const MenuItem = styled.button`
 `;
 
 export default function Layout(){
+    const navigate = useNavigate();
+    const logOut = async() => {
+        const confirmText = confirm("Are you sure you want to log out?");
+        if(confirmText) {
+            await signOut(auth);
+            navigate("/login");
+        }
+    }
     return (
         <Wrapper>
             <Nav>
@@ -48,7 +58,7 @@ export default function Layout(){
                     </Menu>
                 </Column>
                 <Column>
-                    <MenuItem>Logout</MenuItem>
+                    <MenuItem onClick={logOut}>Logout</MenuItem>
                 </Column>
             </Nav>
 

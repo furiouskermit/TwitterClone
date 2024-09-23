@@ -1,5 +1,4 @@
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { GithubAuthProvider } from "firebase/auth/cordova";
+import { GithubAuthProvider, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { auth } from "../firebase";
