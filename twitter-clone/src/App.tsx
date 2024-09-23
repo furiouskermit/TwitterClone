@@ -105,6 +105,10 @@ const GlobalStyles = createGlobalStyle`
   .bg-point {
     background-color: var(--point) !important;
     color: #fff !important;
+    transition: 0.1s;
+    &:hover {
+      background-color: #1c53cc !important;
+    }
   }
   .text-muted {
     color: var(--text-muted) !important;

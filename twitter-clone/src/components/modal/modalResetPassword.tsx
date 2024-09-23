@@ -29,7 +29,7 @@ export default function ModalResetPassword(){
         <Wrapper>
             <Form onSubmit={resetPassword}>
                 <FormInput type="email" name="email" onChange={onChangeValue} value={email} placeholder="email" />
-                <FormInput type="submit" value="Send email" className="bg-point" />
+                <FormInput type="submit" value="Send" className="bg-point" />
             </Form>
         </Wrapper>
     );

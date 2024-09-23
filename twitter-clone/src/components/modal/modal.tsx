@@ -41,6 +41,11 @@ const ModalTitle = styled.strong`
     font-size: 20px;
 `;
 const CloseModalButton = styled.button`
+    border-radius: var(--bd-rad);
+    transition: 0.1s;
+    &:hover {
+        background-color: var(--border-color);
+    }
     & svg {
         width: 25px;
         color: var(--text-muted);
