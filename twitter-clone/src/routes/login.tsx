@@ -5,7 +5,7 @@ import { auth } from "../firebase";
 import { ChangeEvent, useState } from "react";
 import Modal from "../components/modal/modal";
 import ModalResetPassword from "../components/modal/modalResetPassword";
-import { Column, Divider, Error, Form, FormInput, Switcher, Title, Wrapper } from "../components/auth-components";
+import { Column, Divider, Error, Form, FormInput, Switcher, Title, Wrapper } from "../css/auth-components";
 import { FirebaseError } from "firebase/app";
 import GithubLogin from "../components/githubLogin";
 

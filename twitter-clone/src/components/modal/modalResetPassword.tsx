@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Form, FormInput } from "../auth-components";
+import { Form, FormInput } from "../../css/auth-components";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useState } from "react";

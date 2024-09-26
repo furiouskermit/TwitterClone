@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Column, Divider, Error, Form, FormInput, Switcher, Title, Wrapper } from "../components/auth-components";
+import { Column, Divider, Error, Form, FormInput, Switcher, Title, Wrapper } from "../css/auth-components";
 import GithubLogin from "../components/githubLogin";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
