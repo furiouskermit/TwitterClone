@@ -2,10 +2,11 @@ import styled from "styled-components";
 import User from "./user";
 import { TweetInterface } from "./timeline";
 import { auth, db, storage } from "../firebase";
-import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BtnArea, DeleteTweetImg, FileArea, FileInput, FileLabel, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg } from "../css/tweet-components";
+import firebase from "firebase/compat/app";
 
 const Wrapper = styled.div`
     &:not(:last-child) {
@@ -58,10 +59,25 @@ const TweetsImg = styled.img`
     border-radius: 20px;
 `;
 
-export default function Tweet({ id, tweet, createdAt, userId, username, userEmail, userThumbnail, photo }: TweetInterface){
+const TweetsFooter = styled.div``;
+const TweetsActionBtn = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    & svg {
+        width: 20px;
+        &.liked {
+            color: tomato;
+        }
+    }
+`;
+const LikedNumber = styled.span``;
+
+export default function Tweet({ id, tweet, createdAt, userId, username, userEmail, userThumbnail, photo, liked }: TweetInterface){
     const user = auth.currentUser;
     const [isLoading, setLoading] = useState(false);
     const [isClicked, setClicked] = useState(false);
+    const [isLiked, setLiked] = useState(false);
     const [newTweet, setNewTweeet] = useState("");
     const [newFile, setNewFile] = useState<(File | string) | null>(photo ? photo : null);
     const editTweet = async() => {
@@ -80,6 +96,9 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
         } catch(e) {
             console.log(e);
         }
+    };
+    const changeLiked = () => {
+        setLiked(!isLiked);
     };
     const changeValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setNewTweeet(e.target.value);
@@ -115,7 +134,7 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
         try {
             setLoading(true);
 
-            const docRef = doc(db, 'tweets', id);
+            const docRef = doc(db, "tweets", id);
 
             let locationRef = null;
             let result = null;
@@ -141,6 +160,13 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
             setClicked(false);
         }
     };
+    useEffect(() => {
+        if(!user) return;
+        const docs = doc(db, "tweets", id);
+        updateDoc(docs, {
+            liked: isLiked ? arrayUnion(user.uid) : arrayRemove(user.uid)
+        });
+    }, [isLiked]);
 
     return (
         <Wrapper>
@@ -166,12 +192,29 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
                 </TweetsHeader>
                 {
                     !isClicked ?
-                    <TweetsBody>
-                        <TweetsContent>{tweet}</TweetsContent>
-                        {
-                            photo ? <TweetsImg src={photo} /> : null
-                        }
-                    </TweetsBody>
+                    <>
+                        <TweetsBody>
+                            <TweetsContent>{tweet}</TweetsContent>
+                            {
+                                photo ? <TweetsImg src={photo} /> : null
+                            }
+                        </TweetsBody>
+                        <TweetsFooter>
+                            <TweetsActionBtn type="button" onClick={changeLiked}>
+                                {
+                                    isLiked ?
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 liked">
+                                        <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                                    </svg>
+                                    :
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                    </svg>
+                                }
+                                <LikedNumber className="text-muted">{ liked ? liked.length : 0 }</LikedNumber>
+                            </TweetsActionBtn>
+                        </TweetsFooter>
+                    </>
                     : <>
                         <PostForm onSubmit={submitEdit}>
                             <PostTweet defaultValue={tweet} onChange={changeValue} placeholder="What is happening?"></PostTweet>

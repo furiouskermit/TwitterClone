@@ -16,9 +16,9 @@ export interface TweetInterface {
     username: string,
     userEmail: string,
     userThumbnail: string,
+    liked: Array<string>,
     photo?: string
 };
-
 
 export default function Timeline(){
     const [tweets, setTweets] = useState<TweetInterface[]>([]);
@@ -32,7 +32,7 @@ export default function Timeline(){
             );
             unsubscribe = await onSnapshot(tweetQuery, (snapshot) => {
                 const tweetSnapshot = snapshot.docs.map((doc) => {
-                    const { tweet, createdAt, userId, username, userEmail, userThumbnail, photo } = doc.data();
+                    const { tweet, createdAt, userId, username, userEmail, userThumbnail, photo, liked } = doc.data();
                     return {
                         tweet,
                         createdAt,
@@ -41,6 +41,7 @@ export default function Timeline(){
                         userEmail,
                         userThumbnail,
                         photo,
+                        liked,
                         id: doc.id
                     };
                 });

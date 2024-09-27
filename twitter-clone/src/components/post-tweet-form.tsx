@@ -4,7 +4,6 @@ import { useState } from "react";
 import { addDoc, collection, updateDoc } from "firebase/firestore";
 import { auth, db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { TweetInterface } from "./timeline";
 import { BtnArea, DeleteTweetImg, FileArea, FileInput, FileLabel, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg } from "../css/tweet-components";
 
 const Wrapper = styled.div`
@@ -53,6 +52,7 @@ export default function PostTweetForm(){
                 userId: user.uid,
                 userEmail: user.email?.split("@")[0],
                 username: user.displayName,
+                liked: [],
                 userThumbnail: (!user.photoURL || user.photoURL === "") ? "/defaultProfileImg.png" : user.photoURL
             });
 
