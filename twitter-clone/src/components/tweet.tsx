@@ -4,9 +4,8 @@ import { TweetInterface } from "./timeline";
 import { auth, db, storage } from "../firebase";
 import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { BtnArea, DeleteTweetImg, FileArea, FileInput, FileLabel, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg } from "../css/tweet-components";
-import firebase from "firebase/compat/app";
 
 const Wrapper = styled.div`
     &:not(:last-child) {
@@ -97,8 +96,13 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
             console.log(e);
         }
     };
-    const changeLiked = () => {
+    const changeLiked = async(type: string) => {
+        if(!user) return;
         setLiked(!isLiked);
+        const docs = doc(db, "tweets", id);
+        await updateDoc(docs, {
+            liked: type === "liked" ? arrayUnion(user.uid) : arrayRemove(user.uid)
+        });
     };
     const changeValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setNewTweeet(e.target.value);
@@ -160,13 +164,6 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
             setClicked(false);
         }
     };
-    useEffect(() => {
-        if(!user) return;
-        const docs = doc(db, "tweets", id);
-        updateDoc(docs, {
-            liked: isLiked ? arrayUnion(user.uid) : arrayRemove(user.uid)
-        });
-    }, [isLiked]);
 
     return (
         <Wrapper>
@@ -200,9 +197,9 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
                             }
                         </TweetsBody>
                         <TweetsFooter>
-                            <TweetsActionBtn type="button" onClick={changeLiked}>
+                            <TweetsActionBtn type="button" onClick={() => changeLiked(isLiked ? "liked" : "unliked")}>
                                 {
-                                    isLiked ?
+                                    user != null && liked.includes(user.uid) ?
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 liked">
                                         <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
                                     </svg>
