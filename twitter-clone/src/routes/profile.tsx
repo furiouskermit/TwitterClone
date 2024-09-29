@@ -109,7 +109,7 @@ export default function Profile(){
     const [guild, setGuild] = useState("Night Walker");
     const [playstyle, setPlaystyle] = useState([]);
     const [comment, setComment] = useState("");
-    const [cardBgImg, setCardBgImg] = useState("/profile/jobs/warrior.png");
+    const [cardBgImg, setCardBgImg] = useState("/profile/jobs/cardBgImg0.png");
 
     const [isModalOpened, setModalOpened] = useState(false);
     const openModal = async() => {
@@ -168,7 +168,7 @@ export default function Profile(){
             <Column></Column>
 
             {
-                isModalOpened ? <Modal clickEvent={openModal}  modalTitle=""><ModalEditProfile></ModalEditProfile></Modal> : null
+                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile></ModalEditProfile></Modal> : null
             }            
         </Wrapper>
     );

@@ -57,6 +57,15 @@ export const GlobalStyles = createGlobalStyle`
     .d-block {
         display: block !important;
     }
+    .w-100 {
+        width: 100% !important;
+    }
+    .h-100 {
+        height: 100% !important;
+    }
+    .overflow-y {
+        overflow-y: auto !important;
+    }
     .bg-point {
         background-color: var(--point) !important;
         color: #fff !important;

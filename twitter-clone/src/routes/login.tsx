@@ -83,7 +83,7 @@ export default function Login(){
             </Column>
 
             {
-                isModalOpened ? <Modal clickEvent={openModal} modalTitle="Reset Password"><ModalResetPassword></ModalResetPassword></Modal> : null
+                isModalOpened ? <Modal modalType="small" clickEvent={openModal} modalTitle="Reset Password"><ModalResetPassword></ModalResetPassword></Modal> : null
             }
         </Wrapper>
     );

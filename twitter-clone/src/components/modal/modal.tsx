@@ -22,17 +22,24 @@ const ModalContent = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
-    padding: 20px;
-    border-radius: var(--bd-rad);
     width: 100%;
     max-width: 400px;
+    max-height: 95%;
+    padding: 20px;
+    border-radius: var(--bd-rad);
+    background-color: #fff;
+    box-shadow: 0 0 30px rgba(0,0,0,0.07);
     z-index: 992;
     position: relative;
+    &.full-modal {
+        height: 100%;
+    }
 `;
 const ModalHeader = styled.div`
-    margin: 0 0 10px;
     position: relative;
+    &:not(.no-header) {
+        margin: 0 0 10px;
+    }
 `;
 const ModalTitle = styled.strong`
     font-weight: bold;
@@ -55,12 +62,12 @@ const CloseModalButton = styled.button`
     }
 `;
 
-export default function Modal({ children, clickEvent, modalTitle }: { children: React.ReactNode, clickEvent: ()=>{}, modalTitle: string}){
+export default function Modal({ children, clickEvent, modalTitle, modalType }: { children: React.ReactNode, clickEvent: ()=>{}, modalTitle: string, modalType: string}){
     return (
         <Wrapper>
             <ModalBackground onClick={clickEvent}></ModalBackground>
-            <ModalContent>
-                <ModalHeader>
+            <ModalContent className={modalType === "full" ? "full-modal" : ""}>
+                <ModalHeader className={modalTitle === "" ? "no-header" : ""}>
                     {
                         modalTitle === "" ? null : <ModalTitle>{modalTitle}</ModalTitle>
                     }
