@@ -47,7 +47,7 @@ export default function User({ thumbnail, name, email, date } : { thumbnail: str
     const postingDate = getDate ? `${getDate.getFullYear()}-${convertNumber(getDate.getMonth()+1)}-${convertNumber(getDate.getDate())}` : "";
     return (
         <UserItem className="user">
-            <UserThumbnail><UserAvatar src={thumbnail === "" ? user?.photoURL ? user.photoURL : "/defaultProfileImg.png" : thumbnail} /></UserThumbnail>
+            <UserThumbnail><UserAvatar src={thumbnail === "" ? user?.photoURL ? user.photoURL : "/profile/user/UserImg01.png" : thumbnail} /></UserThumbnail>
             <UserInfo>
                 <UserName>{ name === "" ? user?.displayName : name }</UserName>
                 <UserId className="text-muted">@{ email === "" ? user?.email?.split('@')[0] : email }</UserId>

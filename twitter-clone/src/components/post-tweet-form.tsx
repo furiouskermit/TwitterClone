@@ -53,7 +53,7 @@ export default function PostTweetForm(){
                 userEmail: user.email?.split("@")[0],
                 username: user.displayName,
                 liked: [],
-                userThumbnail: (!user.photoURL || user.photoURL === "") ? "/defaultProfileImg.png" : user.photoURL
+                userThumbnail: (!user.photoURL || user.photoURL === "") ? "/profile/user/UserImg01.png" : user.photoURL
             });
 
             if(file) {

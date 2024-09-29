@@ -78,7 +78,7 @@ export default function Login(){
                 }
                 <Switcher>
                     <Link to="/signup">Sign Up</Link>
-                    <ResetPassword onClick={openModal}>Forgot Password</ResetPassword>
+                    <ResetPassword type="button" onClick={openModal}>Forgot Password</ResetPassword>
                 </Switcher>
             </Column>
 
