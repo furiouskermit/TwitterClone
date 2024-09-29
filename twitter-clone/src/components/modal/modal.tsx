@@ -44,6 +44,7 @@ const CloseModalButton = styled.button`
     top: 50%;
     transform: translateY(-50%);
     border-radius: var(--bd-rad);
+    z-index: 10;
     transition: 0.1s;
     &:hover {
         background-color: var(--border-color);
