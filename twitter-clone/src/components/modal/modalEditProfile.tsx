@@ -2,11 +2,12 @@ import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import { auth, db } from "../../firebase";
 import { FormInput } from "../../css/auth-components";
-import { updatePassword, updateProfile } from "firebase/auth";
+import { signOut, updatePassword, updateProfile } from "firebase/auth";
 import { addDoc, arrayUnion, collection, doc, getDoc, query, setDoc, updateDoc, where } from "firebase/firestore";
 import Modal from "./modal";
 import ModalProfileCardBg from "./modal-profile-card-bg";
 import { ProfileCardInterface } from "../../routes/profile";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div``;
 const Form = styled.form``;
@@ -150,6 +151,7 @@ const FormTextarea = styled.textarea`
 
 export default function ModalEditProfile(props: any){
     const user = auth.currentUser;
+    const navigate = useNavigate();
     const playstyleType = [
         {
             id: 0,
@@ -239,11 +241,6 @@ export default function ModalEditProfile(props: any){
                 displayName: newName,
             })
 
-            // update password
-            if(newPassword !== "") {
-                await updatePassword(user, newPassword);
-            }
-
             // if user's profile data is not stored in firestore, use setDoc()
             // if not, use updateDoc()
             if(!profile.data()) {
@@ -274,11 +271,22 @@ export default function ModalEditProfile(props: any){
                 };
                 props.changeEvent(sendData);
             }
+
+            // update password
+            if(newPassword !== "") {
+                await updatePassword(user, newPassword);
+            }
         } catch(e) {
             console.log(e);
         } finally {
-            // close modal
-            props.clickEvent();
+            if(newPassword !== "") {
+                alert("Your password has been changed successfully!");
+                await signOut(auth);
+                navigate("/login");
+            } else {
+                // close modal
+                props.clickEvent();
+            }
         }
     }
 
@@ -325,7 +333,7 @@ export default function ModalEditProfile(props: any){
                                 <UserInfo>
                                     <UserInfoTitle>PASSWORD</UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormInput type="password" name="password" onChange={changeValue} value="" />
+                                        <FormInput type="password" name="password" onChange={changeValue} value={newPassword} />
                                     </UserInfoContent>
                                 </UserInfo>
 
