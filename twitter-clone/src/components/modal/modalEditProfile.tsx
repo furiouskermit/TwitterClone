@@ -173,9 +173,9 @@ export default function ModalEditProfile(props: any){
     const [newCardBgImg, setNewCardBgImg] = useState(props.info.cardBgImg);
     const [newName, setNewName] = useState(user?.displayName ?? "Anonymous");
     const [newPassword, setNewPassword] = useState("");
-    const [newGuild, setNewGuild] = useState("");
+    const [newGuild, setNewGuild] = useState(props.info.guild);
     const [newPlaystyle, setNewPlaystyle] = useState<Array<String>>(props.info.playstyle);
-    const [newComment, setNewComment] = useState("");
+    const [newComment, setNewComment] = useState(props.info.comment);
 
     const [isModalOpened, setModalOpened] = useState(false);
     const [subModalType, setSubModalType] = useState("");
