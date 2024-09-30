@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import { auth } from "../firebase";
-import { useState } from "react";
+import { auth, db } from "../firebase";
+import { useEffect, useState } from "react";
 import Modal from "../components/modal/modal";
 import ModalEditProfile from "../components/modal/modalEditProfile";
+import { doc, getDoc } from "firebase/firestore";
 
 const Wrapper = styled.div``;
 const Column = styled.div`
@@ -31,7 +32,8 @@ const UserImg = styled.img`
     width: 100%;
 `;
 const UserInfo = styled.div``;
-const UserGuildName = styled.div`
+const UserGuildName = styled.span`
+    display: inline-block;
     margin: 0 0 15px;
     padding: 5px 10px;
     background-color: var(--point);
@@ -53,9 +55,11 @@ const ProfileCardDescTitle = styled.div`
 const ProfileCardDescContent = styled.div``;
 const UserPlaystyle = styled.div`
     margin: 10px 0 0;
+    font-size: 22px;
 `;
 const UserPlaystyleTag = styled.span`
     display: inline-block;
+    margin-right: 7px;
     padding: 7px 15px;
     border: 1px solid #fff;
     border-radius: 50px;
@@ -96,18 +100,20 @@ const ProfileCardBtn = styled.button`
     }
 `;
 
-export interface ProfileCard {
-    guild: string,
-    playstyle: Array<String>,
-    comment: string,
-    cardBgImg: string,
+export interface ProfileCardInterface {
+    id?: string,
+    guild?: string,
+    playstyle?: Array<String>,
+    comment?: string,
+    cardBgImg?: string,
 };
 
 export default function Profile(){
     const user = auth.currentUser;
 
-    const [guild, setGuild] = useState("Night Walker");
-    const [playstyle, setPlaystyle] = useState([]);
+    const [profileCardInfo, setProfileCardInfo] = useState<ProfileCardInterface>();
+    const [guild, setGuild] = useState("");
+    const [playstyle, setPlaystyle] = useState<any>([]);
     const [comment, setComment] = useState("");
     const [cardBgImg, setCardBgImg] = useState("/profile/jobs/cardBgImg0.png");
 
@@ -115,7 +121,36 @@ export default function Profile(){
     const openModal = async() => {
         setModalOpened(!isModalOpened);
     };
+    const fetchProfile = async() => {
+        if(!user) return;
+        const profile = doc(db, "profile", user.uid);
 
+        const snapshot = await getDoc(profile);
+        const profileDoc = snapshot.data();
+        if(!profileDoc) return;
+        const profileObject = {
+            id: profileDoc.id,
+            playstyle: profileDoc.playstyle,
+            guild: profileDoc.guild,
+            comment: profileDoc.comment,
+            cardBgImg: profileDoc.cardBgImg
+        }
+        setProfileCardInfo(profileObject);
+    };
+
+    const handleProfileCardInfo = (data: any) => {
+        setProfileCardInfo(data);
+    };
+
+    useEffect(()=>{
+      fetchProfile();
+    }, []);
+    useEffect(()=>{
+        setGuild(profileCardInfo?.guild ?? "");
+        setPlaystyle(profileCardInfo?.playstyle ?? []);
+        setComment(profileCardInfo?.comment ?? "");
+        setCardBgImg(profileCardInfo?.cardBgImg ?? "");
+    }, [profileCardInfo]);
 
     return (
         <Wrapper>
@@ -126,7 +161,7 @@ export default function Profile(){
                             <UserImg src={user?.photoURL ?? "/profile/user/UserImg01.png"} />
                         </UserThumbnail>
                         <UserInfo>
-                            { guild === "" ? null : <UserGuildName>{guild}</UserGuildName> }
+                            { guild !== "" ? <UserGuildName>{guild}</UserGuildName> : null }
                             <UserName>{user?.displayName ?? "Anonymous"}</UserName>
                             <UserEmail className="text-muted">{user?.email}</UserEmail>
                         </UserInfo>
@@ -136,7 +171,9 @@ export default function Profile(){
                         <ProfileCardDescTitle className="text-muted">PLAYSTYLE</ProfileCardDescTitle>
                         <ProfileCardDescContent>
                             <UserPlaystyle>
-                                <UserPlaystyleTag>1111</UserPlaystyleTag>
+                                {
+                                    playstyle.length > 0 ? playstyle.map((item: string) => <UserPlaystyleTag key={`user_playstyle_${item}`}>#{item}</UserPlaystyleTag>) : "There is no selected playstyle."
+                                }
                             </UserPlaystyle>
                         </ProfileCardDescContent>
                     </ProfileCardDesc>
@@ -144,7 +181,7 @@ export default function Profile(){
                     <ProfileCardDesc>
                         <ProfileCardDescTitle className="text-muted">COMMENT</ProfileCardDescTitle>
                         <ProfileCardDescContent>
-                            <UserComment>asdadsdad</UserComment>
+                            <UserComment>{comment}</UserComment>
                         </ProfileCardDescContent>
                     </ProfileCardDesc>
                 </ProfileCard>
@@ -168,8 +205,8 @@ export default function Profile(){
             <Column></Column>
 
             {
-                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile></ModalEditProfile></Modal> : null
-            }            
+                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile clickEvent={openModal} changeEvent={(data: string) => handleProfileCardInfo(data)} info={profileCardInfo}></ModalEditProfile></Modal> : null
+            }          
         </Wrapper>
     );
 }

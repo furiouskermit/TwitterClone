@@ -39,6 +39,9 @@ export const GlobalStyles = createGlobalStyle`
         &:focus {
             outline: none;
         }
+        &:read-only {
+            background-color: #f1f2f3;
+        }
         &::placeholder {
             color: var(--text-muted);
         }

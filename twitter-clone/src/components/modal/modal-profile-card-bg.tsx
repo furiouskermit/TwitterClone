@@ -24,6 +24,13 @@ const CardBgItemInput = styled.input`
             top: 0;
             left: 0;
             background-color: rgba(var(--point-rgb), 0.5);
+            z-index: 5;
+        }
+        & img {
+            filter: blur(1px);
+        }
+        & svg {
+            display: block;
         }
     }
 `;
@@ -42,13 +49,23 @@ const CardBgItemLabel = styled.label`
         content: '';
         transition: 0.1s;
     }
+    & svg {
+        width: 40px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        z-index: 10;
+        display: none;
+    }
 `;
 const CardBgItemImg = styled.img`
     width: 80%;
 `;
 
 export default function ModalProfileCardBg(props: any){
-    const [selectedImg, setSelectedImg] = useState("");
+    const [selectedImg, setSelectedImg] = useState(props.curentImg);
     const changeImg = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         setSelectedImg(`/profile/jobs/${value}.png`);
@@ -67,6 +84,9 @@ export default function ModalProfileCardBg(props: any){
                             <CardBgItemInput type="radio" name="cardBgImg" id={`cardBgImg${index}`} onChange={changeImg} value={`cardBgImg${index}`} defaultChecked={props.curentImg === `/profile/jobs/cardBgImg${index}.png` ? true : false} />
                             <CardBgItemLabel htmlFor={`cardBgImg${index}`}>
                                 <CardBgItemImg src={`/profile/jobs/cardBgImg${index}.png`} />
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
                             </CardBgItemLabel>
                         </CardBgItem>
                     )

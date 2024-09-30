@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import styled from "styled-components";
 import { auth, db } from "../../firebase";
 import { FormInput } from "../../css/auth-components";
 import { updatePassword, updateProfile } from "firebase/auth";
-import { addDoc, collection, doc, getDoc, query, where } from "firebase/firestore";
+import { addDoc, arrayUnion, collection, doc, getDoc, query, setDoc, updateDoc, where } from "firebase/firestore";
 import Modal from "./modal";
 import ModalProfileCardBg from "./modal-profile-card-bg";
+import { ProfileCardInterface } from "../../routes/profile";
 
 const Wrapper = styled.div``;
 const Form = styled.form``;
@@ -99,10 +100,12 @@ const UserDesc = styled.div`
 const UserDescInner = styled.div``;
 const UserInfo = styled.div`
     &:not(:last-child) {
-        margin: 0 0 15px;
+        margin: 0 0 25px;
     }
 `;
-const UserInfoTitle = styled.div``;
+const UserInfoTitle = styled.div`
+    font-weight: bold;
+`;
 const UserInfoContent = styled.div`
     display: flex;
     & :is(input, textarea) {
@@ -145,10 +148,7 @@ const FormTextarea = styled.textarea`
     }
 `;
 
-
-
-
-export default function ModalEditProfile(){
+export default function ModalEditProfile(props: any){
     const user = auth.currentUser;
     const playstyleType = [
         {
@@ -168,11 +168,11 @@ export default function ModalEditProfile(){
             name: "screenshots"
         },
     ];
-    const [newCardBgImg, setNewCardBgImg] = useState("/profile/jobs/cardBgImg0.png");
+    const [newCardBgImg, setNewCardBgImg] = useState(props.info.cardBgImg);
     const [newName, setNewName] = useState(user?.displayName ?? "Anonymous");
     const [newPassword, setNewPassword] = useState("");
     const [newGuild, setNewGuild] = useState("");
-    const [newPlaystyle, setNewPlaystyle] = useState([]);
+    const [newPlaystyle, setNewPlaystyle] = useState<Array<String>>(props.info.playstyle);
     const [newComment, setNewComment] = useState("");
 
     const [isModalOpened, setModalOpened] = useState(false);
@@ -211,6 +211,19 @@ export default function ModalEditProfile(){
         setNewCardBgImg(data);
     };
 
+    const changePlaystyle = (e: ChangeEvent<HTMLInputElement>) => {
+        const { value, checked } = e.target;
+        if(checked) {
+            if(!newPlaystyle.includes(value)) {
+                setNewPlaystyle(current => [...current, value]);
+            }
+        } else {
+            if(newPlaystyle.includes(value)) {
+                setNewPlaystyle((current) => current.filter((item) => item !== value));
+            }
+        }
+    };
+
     const submitProfile = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -219,8 +232,7 @@ export default function ModalEditProfile(){
         try {
             // doc 불러오기
             const profile = await getDoc(doc(db, "profile", user.uid));
-            const profileCollection = collection(db, "profile");
-            console.log(profile.data(), 'profile');
+            const userDoc = doc(collection(db, "profile"), user.uid);
 
             // update profile
             await updateProfile(user, {
@@ -231,12 +243,11 @@ export default function ModalEditProfile(){
             if(newPassword !== "") {
                 await updatePassword(user, newPassword);
             }
-            
 
+            // if user's profile data is not stored in firestore, use setDoc()
+            // if not, use updateDoc()
             if(!profile.data()) {
-                console.log("no data");
-                
-                const docs = await addDoc(profileCollection, {
+                const docs = await setDoc(userDoc, {
                     id: user.uid,
                     cardBgImg: newCardBgImg,
                     guild: newGuild,
@@ -244,16 +255,31 @@ export default function ModalEditProfile(){
                     comment: newComment
                 })
 
+            } else {
+                // update profile data in firestore
+                await updateDoc(userDoc, {
+                    guild: newGuild,
+                    cardBgImg: newCardBgImg,
+                    playstyle: newPlaystyle,
+                    comment: newComment
+                });
+
+                // update profile.tsx file's profileCardInfo variable state
+                const sendData = {
+                    id: user.uid,
+                    cardBgImg: newCardBgImg,
+                    guild: newGuild,
+                    playstyle: newPlaystyle,
+                    comment: newComment
+                };
+                props.changeEvent(sendData);
             }
-            // 저장된 프로필이 없다면 addDoc
-            // 있다면 update
-            // addDoc(profileCollection, {
-
-            // })
-
         } catch(e) {
             console.log(e);
-        } finally {}
+        } finally {
+            // close modal
+            props.clickEvent();
+        }
     }
 
     return(
@@ -306,7 +332,7 @@ export default function ModalEditProfile(){
                                 <UserInfo>
                                     <UserInfoTitle>GUILD</UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormInput type="text" name="guild" maxLength={20} onChange={changeValue} placeholder="Newbies" />
+                                        <FormInput type="text" name="guild" maxLength={20} onChange={changeValue} defaultValue={props.info.guild} placeholder="Newbies" />
                                     </UserInfoContent>
                                 </UserInfo>
 
@@ -317,7 +343,7 @@ export default function ModalEditProfile(){
                                             {
                                                 playstyleType.map((item) =>
                                                     <PlaystyleLabel key={`playstyle_${item.name}`}>
-                                                        <PlaystyleInput type="checkbox" name="playstyle" defaultValue={item.name} />
+                                                        <PlaystyleInput type="checkbox" name="playstyle" onChange={changePlaystyle} defaultValue={item.name} checked={newPlaystyle.includes(item.name)} />
                                                         <PlaystyleText>#{item.name}</PlaystyleText>
                                                     </PlaystyleLabel>
                                                 )
@@ -329,7 +355,7 @@ export default function ModalEditProfile(){
                                 <UserInfo>
                                     <UserInfoTitle>COMMENT</UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormTextarea name="comment" onChange={changeValue}></FormTextarea>
+                                        <FormTextarea name="comment" onChange={changeValue} defaultValue={props.info.comment}></FormTextarea>
                                     </UserInfoContent>
                                 </UserInfo>
                             </UserDescInner>
@@ -344,7 +370,7 @@ export default function ModalEditProfile(){
                     <>
                         {
                             subModalType === "cardBg" ?
-                            <Modal modalType="" clickEvent={openModal} modalTitle="Select Card Background"><ModalProfileCardBg clickEvent={openModal} changeEvent={(item:string)=>changeCardBg(item)} curentImg={newCardBgImg}></ModalProfileCardBg></Modal>
+                            <Modal modalType="" clickEvent={openModal} modalTitle="Select Card Character"><ModalProfileCardBg clickEvent={openModal} changeEvent={(item:string)=>changeCardBg(item)} curentImg={newCardBgImg}></ModalProfileCardBg></Modal>
                             : null
                         }
                     </>
