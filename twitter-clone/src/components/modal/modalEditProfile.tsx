@@ -8,6 +8,7 @@ import Modal from "./modal";
 import ModalProfileCardBg from "./modal-profile-card-bg";
 import { ProfileCardInterface } from "../../routes/profile";
 import { useNavigate } from "react-router-dom";
+import ModalProfileUserImg from "./modal-profile-user-img";
 
 const Wrapper = styled.div``;
 const Form = styled.form``;
@@ -22,9 +23,6 @@ const CardBgImg = styled.img`
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-`;
-const ImgFileInput = styled.input`
-    display: none;
 `;
 const CardBgButton = styled.button`
     position: absolute;
@@ -64,7 +62,7 @@ const UserThumbnail = styled.div`
     left: 50%;
     transform: translateX(-50%);
 `;
-const UserImgFileLabel = styled.label`
+const UserImgButton = styled.button`
     display: inline-block;
     width: 120px;
     height: 120px;
@@ -170,9 +168,10 @@ export default function ModalEditProfile(props: any){
             name: "screenshots"
         },
     ];
-    const [newCardBgImg, setNewCardBgImg] = useState(props.info.cardBgImg);
     const [newName, setNewName] = useState(user?.displayName ?? "Anonymous");
+    const [newUserImg, setNewUserImg] = useState(user?.photoURL ?? "/profile/user/UserImg01.png");
     const [newPassword, setNewPassword] = useState("");
+    const [newCardBgImg, setNewCardBgImg] = useState(props.info.cardBgImg);
     const [newGuild, setNewGuild] = useState(props.info.guild);
     const [newPlaystyle, setNewPlaystyle] = useState<Array<String>>(props.info.playstyle);
     const [newComment, setNewComment] = useState(props.info.comment);
@@ -211,6 +210,9 @@ export default function ModalEditProfile(props: any){
     };
     const changeCardBg = (data: string) => {
         setNewCardBgImg(data);
+    };
+    const changeUserImg = (data: string) => {
+        setNewUserImg(data);
     };
 
     const changePlaystyle = (e: ChangeEvent<HTMLInputElement>) => {
@@ -305,14 +307,13 @@ export default function ModalEditProfile(props: any){
                     </CardBg>
                     <UserDetails>
                         <UserThumbnail>
-                            <ImgFileInput type="file" name="userImgFile" onChange={changeFile} id="userImgFile" />
-                            <UserImgFileLabel htmlFor="userImgFile">
-                                <UserImg src={user?.photoURL ?? "/profile/user/UserImg01.png"} />
+                            <UserImgButton type="button" onClick={openSubModal} data-type="userImg">
+                                <UserImg src={newUserImg === "" ? "/profile/user/UserImg01.png" : newUserImg} />
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
                                 </svg>
-                            </UserImgFileLabel>
+                            </UserImgButton>
                         </UserThumbnail>
                         <UserDesc className="h-100">
                             <UserDescInner className="h-100 overflow-y">
@@ -375,13 +376,13 @@ export default function ModalEditProfile(props: any){
 
             {
                 isModalOpened ? 
-                    <>
+                    <Modal modalType="" clickEvent={openModal} modalTitle={subModalType === "cardBg" ? "Select Card Character" : "Select User Thumbnail"}>
                         {
                             subModalType === "cardBg" ?
-                            <Modal modalType="" clickEvent={openModal} modalTitle="Select Card Character"><ModalProfileCardBg clickEvent={openModal} changeEvent={(item:string)=>changeCardBg(item)} curentImg={newCardBgImg}></ModalProfileCardBg></Modal>
-                            : null
+                            <ModalProfileCardBg clickEvent={openModal} changeEvent={(item:string)=>changeCardBg(item)} curentImg={newCardBgImg}></ModalProfileCardBg>
+                            : <ModalProfileUserImg clickEvent={openModal} changeEvent={(item:string)=>changeUserImg(item)} currentImg={newUserImg}></ModalProfileUserImg>
                         }
-                    </>
+                    </Modal>
                 : null
             }
         </>
