@@ -72,7 +72,8 @@ const TweetsActionBtn = styled.button`
 `;
 const LikedNumber = styled.span``;
 
-export default function Tweet({ id, tweet, createdAt, userId, username, userEmail, userThumbnail, photo, liked }: TweetInterface){
+export default function Tweet(props: any){
+    const { id, tweet, createdAt, userId, username, userEmail, userThumbnail, photo, liked } = props
     const user = auth.currentUser;
     const [isLoading, setLoading] = useState(false);
     const [isClicked, setClicked] = useState(false);
@@ -169,7 +170,7 @@ export default function Tweet({ id, tweet, createdAt, userId, username, userEmai
         <Wrapper>
             <Tweets>
                 <TweetsHeader>
-                    <User thumbnail={userThumbnail} email={userEmail} name={username} date={String(createdAt)} />
+                    { props.children }
                     {
                         (!isClicked && user?.uid === userId) ?
                         <EditArea>

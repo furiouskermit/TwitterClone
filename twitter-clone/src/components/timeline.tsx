@@ -4,6 +4,7 @@ import { auth, db } from "../firebase";
 import { useEffect, useState } from "react";
 import Tweet from "./tweet";
 import { changeOutletContext } from "./layout";
+import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
 
 const Wrapper = styled.div`
     margin: 30px 0 0;
@@ -86,7 +87,17 @@ export default function Timeline(){
     return (
         <Wrapper>
             {
-                tweets.map((tweet) => <Tweet key={tweet.id} {...tweet} />)
+                tweets.map((tweet) =>
+                <Tweet key={tweet.id} {...tweet}>
+                    <UserItem className="user">
+                        <UserThumbnail><UserAvatar src={tweet.userThumbnail === "" ? "/profile/user/UserImg01.png" : tweet.userThumbnail} /></UserThumbnail>
+                        <UserInfo>
+                            <UserName>{tweet.username === "" ? "Anonymous" : tweet.username}</UserName>
+                            <UserId className="text-muted">@{tweet.userEmail}</UserId>
+                            <PostingDate className="text-muted">{tweet.createdAt}</PostingDate>
+                        </UserInfo>
+                    </UserItem>
+                </Tweet>)
             }
         </Wrapper>
     );

@@ -3,12 +3,12 @@ import styled from "styled-components";
 import { auth, db } from "../../firebase";
 import { FormInput } from "../../css/auth-components";
 import { signOut, updatePassword, updateProfile } from "firebase/auth";
-import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
 import Modal from "./modal";
 import ModalProfileCardBg from "./modal-profile-card-bg";
 import { useNavigate } from "react-router-dom";
 import ModalProfileUserImg from "./modal-profile-user-img";
-import { checkMaxLength } from "../../utils/helpers";
+import { checkMaxLength, convertDateYYYYMMDD } from "../../utils/helpers";
 import { changeOutletContext } from "../layout";
 
 const Wrapper = styled.div``;
@@ -258,6 +258,44 @@ export default function ModalEditProfile(props: any){
                         photoURL: newUserImg
                     })
                 })
+
+                // update document
+                const docQuery = query(
+                    collection(db, props.currentTab),
+                    where("userId", "==", user.uid),
+                );
+                const tweetDoc = await getDocs(docQuery);
+                tweetDoc.docs.forEach(async (item) => {
+                    if(item.data()) {
+                        const { username, userThumbnail } = item.data();
+                        if(username !== newName || userThumbnail !== newUserImg) {
+                            await updateDoc(doc(db, props.currentTab, item.id), {
+                                ...(username !== newName && {
+                                    username: newName
+                                }),
+                                ...(userThumbnail !== newUserImg && {
+                                    userThumbnail: newUserImg
+                                })
+                            });
+                        }
+                    }
+                });
+                const tweetInfo = tweetDoc.docs.map((item) => {
+                    if(item.data()){
+                        const { tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = item.data();
+                        return {
+                            id: item.id,
+                            tweet,
+                            username: username !== newName ? newName : username,
+                            userId,
+                            createdAt: convertDateYYYYMMDD(createdAt),
+                            userThumbnail: userThumbnail !== newUserImg ? newUserImg : userThumbnail,
+                            userEmail,
+                            liked
+                        }
+                    }
+                })
+                props.changeBoard(tweetInfo);
             }
 
             // if user's profile data is not stored in firestore, use setDoc()
@@ -290,6 +328,7 @@ export default function ModalEditProfile(props: any){
                 props.changeEvent(sendData);
             }
 
+            // change user info for changing user detail in the header
             const changedUserInfoObject = {
                 displayName: newName,
                 photoURL: newUserImg

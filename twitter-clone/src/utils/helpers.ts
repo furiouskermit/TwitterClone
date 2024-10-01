@@ -8,6 +8,20 @@ export function checkMaxLength(value: string, maxLength: number, handler: any) {
     };
 };
 
+export function convertNumber (number: number) {
+    if(number < 10) {
+        return `0${number}`;
+    } else {
+        return number;
+    }
+};
+
+export function convertDateYYYYMMDD(value: number | string) {
+    const date = new Date(Number(value));
+    const convertDate = `${date.getFullYear()}-${convertNumber(date.getMonth()+1)}-${convertNumber(date.getDate())}`
+    return convertDate;
+};
+
 // update documents in "users" collection
 export const updateUser = async (user: any, collection: string) => {
     const docRef = doc(db, collection, user.uid);

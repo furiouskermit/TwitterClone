@@ -5,8 +5,10 @@ import Modal from "../components/modal/modal";
 import ModalEditProfile from "../components/modal/modalEditProfile";
 import { collection, doc, getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import exportAsImage from "../utils/exportAsImage";
-import { updateUser } from "../utils/helpers";
+import { convertDateYYYYMMDD, updateUser } from "../utils/helpers";
 import Tweet from "../components/tweet";
+import Tab from "../components/Tab";
+import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
 
 const Wrapper = styled.div``;
 const Column = styled.div`
@@ -25,7 +27,7 @@ const ProfileCardThumbnail = styled.div`
     align-items: center;
     gap: 20px;
 `;
-const UserThumbnail = styled.div`
+const CardUserThumbnail = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
@@ -39,7 +41,7 @@ const UserImg = styled.img`
     width: 100%;
     height: 100%;
 `;
-const UserInfo = styled.div``;
+const CardUserInfo = styled.div``;
 const UserGuildName = styled.span`
     display: inline-block;
     margin: 0 0 15px;
@@ -47,7 +49,7 @@ const UserGuildName = styled.span`
     background-color: var(--point);
     border-radius: 50px;
 `;
-const UserName = styled.h3`
+const CardUserName = styled.h3`
     margin: 0 0 15px;
     font-weight: bold;
     font-size: 42px;
@@ -126,6 +128,7 @@ export default function Profile(){
     const [comment, setComment] = useState("");
     const [cardBgImg, setCardBgImg] = useState("/profile/jobs/cardBgImg0.png");
 
+    const [tab, setTab] = useState("tweets")
     const [board, setBoard] = useState<any>([]);
 
     const [isModalOpened, setModalOpened] = useState(false);
@@ -153,6 +156,10 @@ export default function Profile(){
         setProfileCardInfo(data);
     };
 
+    const changeTab = (data: any) => {
+        setTab(data);
+        console.log('tab tab')
+    };
     const fetchBoard = async() => {
         if(!user) return;
         const docQuery = query(
@@ -162,11 +169,11 @@ export default function Profile(){
         );
         const tweetDoc = await getDocs(docQuery);
         const boardInfo = tweetDoc.docs.map((doc) => {
-            const { id, tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
+            const { tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
             return {
-                id,
+                id: doc.id,
                 username,
-                createdAt,
+                createdAt: convertDateYYYYMMDD(createdAt),
                 userThumbnail,
                 userId,
                 userEmail,
@@ -176,11 +183,15 @@ export default function Profile(){
         })
         setBoard(boardInfo);
     };
+    const changeBoard = (data: any) => {
+        setBoard(data);
+    }
 
     useEffect(()=>{
       fetchProfile();
       fetchBoard();
     }, []);
+
     useEffect(()=>{
         setGuild(profileCardInfo?.guild ?? "");
         setPlaystyle(profileCardInfo?.playstyle ?? []);
@@ -195,14 +206,14 @@ export default function Profile(){
             <Column>
                 <ProfileCard ref={exportImgRef}>
                     <ProfileCardThumbnail>
-                        <UserThumbnail>
+                        <CardUserThumbnail>
                             <UserImg src={user?.photoURL ?? "/profile/user/UserImg01.png"} />
-                        </UserThumbnail>
-                        <UserInfo>
+                        </CardUserThumbnail>
+                        <CardUserInfo>
                             { guild !== "" ? <UserGuildName>{guild}</UserGuildName> : null }
-                            <UserName>{user?.displayName ?? "Anonymous"}</UserName>
+                            <CardUserName>{user?.displayName ?? "Anonymous"}</CardUserName>
                             <UserEmail className="text-muted">{user?.email}</UserEmail>
-                        </UserInfo>
+                        </CardUserInfo>
                     </ProfileCardThumbnail>
 
                     <ProfileCardDesc>
@@ -242,13 +253,25 @@ export default function Profile(){
             </Column>
 
             <Column>
+                <Tab tabCnt={4} currentTab={tab} tabTitle={["Home", "Screenshots", "Spoilers", "Tips"]} tabValue={["tweets", "screenshots", "spoilers", "tips"]} changeEvent={(data: any) => changeTab(data)} />
                 {
-                    board.map((boardItem: any) =><Tweet key={boardItem.id} {...boardItem} />)
+                    board.map((boardItem: any) =>
+                        <Tweet key={`profile_${boardItem.id}`} {...boardItem}>
+                            <UserItem className="user">
+                                <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
+                                <UserInfo>
+                                    <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
+                                    <UserId className="text-muted">@{boardItem.userEmail}</UserId>
+                                    <PostingDate className="text-muted">{boardItem.createdAt}</PostingDate>
+                                </UserInfo>
+                            </UserItem>
+                        </Tweet>
+                    )
                 }
             </Column>
 
             {
-                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile clickEvent={openModal} changeEvent={(data: string) => handleProfileCardInfo(data)} info={profileCardInfo}></ModalEditProfile></Modal> : null
+                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile clickEvent={openModal} changeEvent={(data: string) => handleProfileCardInfo(data)} info={profileCardInfo} currentTab={tab} changeTab={(data: any) => changeTab(data)} changeBoard={(data: any) => changeBoard(data)}></ModalEditProfile></Modal> : null
             }          
         </Wrapper>
     );

@@ -1,15 +1,7 @@
 import styled from "styled-components";
 import { auth } from "../firebase";
 import { useState } from "react";
-import { UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
-
-const PostingDate = styled.span`
-    padding-left: 7px;
-    &::before {
-        content: '·';
-        margin-right: 7px;
-    }
-`;
+import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
 
 export default function User(props:any){
     const { thumbnail, name, email, date } = props;

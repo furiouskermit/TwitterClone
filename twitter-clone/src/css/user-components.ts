@@ -25,3 +25,10 @@ export const UserName = styled.strong`
     font-size: 14px;
 `;
 export const UserId = styled.span``;
+export const PostingDate = styled.span`
+    padding-left: 7px;
+    &::before {
+        content: '·';
+        margin-right: 7px;
+    }
+`;
