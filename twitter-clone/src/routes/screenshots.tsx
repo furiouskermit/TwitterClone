@@ -1,10 +1,8 @@
-import styled from "styled-components";
-
-const Wrapper = styled.button``;
+import Temporary from "../components/temporary";
 
 export default function Screenshots(){
     
     return (
-        <Wrapper></Wrapper>
+        <Temporary />
     );
 }

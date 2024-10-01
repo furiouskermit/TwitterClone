@@ -13,8 +13,15 @@ import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThum
 const Wrapper = styled.div``;
 const Column = styled.div`
     position: relative;
+    &.column_content {
+        margin: 30px 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
 `;
 
+/* ### Profile - card area ### */
 const ProfileCard = styled.div`
     padding: 30px;
     background-color: #121A2B;
@@ -55,7 +62,6 @@ const CardUserName = styled.h3`
     font-size: 42px;
 `;
 const UserEmail = styled.div``;
-
 const ProfileCardDesc = styled.div`
     margin: 20px 0 0;
 `;
@@ -81,7 +87,6 @@ const UserComment = styled.p`
     line-height: 1.35em;
     font-size: 22px;
 `;
-
 const ProfileBackgroundImg = styled.img`
     position: absolute;
     width: 150px;
@@ -109,6 +114,9 @@ const ProfileCardBtn = styled.button`
         width: 20px;
     }
 `;
+
+/* ### Profile - tweets area ### */
+const TabContent = styled.div``;
 
 export interface ProfileCardInterface {
     id?: string,
@@ -202,7 +210,7 @@ export default function Profile(){
     }, [profileCardInfo]);
 
     return (
-        <Wrapper>
+        <Wrapper className="overflow-y">
             <Column>
                 <ProfileCard ref={exportImgRef}>
                     <ProfileCardThumbnail>
@@ -237,7 +245,7 @@ export default function Profile(){
                     <ProfileBackgroundImg src={cardBgImg} />
                 </ProfileCard>
                 <BtnArea>
-                    <ProfileCardBtn type="button" onClick={() => exportAsImage(exportImgRef.current, "test")}>
+                    <ProfileCardBtn type="button" onClick={() => exportAsImage(exportImgRef.current, "myProfileCard")}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>
@@ -252,22 +260,24 @@ export default function Profile(){
                 </BtnArea>
             </Column>
 
-            <Column>
+            <Column className="column_content">
                 <Tab tabCnt={4} currentTab={tab} tabTitle={["Home", "Screenshots", "Spoilers", "Tips"]} tabValue={["tweets", "screenshots", "spoilers", "tips"]} changeEvent={(data: any) => changeTab(data)} />
-                {
-                    board.map((boardItem: any) =>
-                        <Tweet key={`profile_${boardItem.id}`} {...boardItem}>
-                            <UserItem className="user">
-                                <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
-                                <UserInfo>
-                                    <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
-                                    <UserId className="text-muted">@{boardItem.userEmail}</UserId>
-                                    <PostingDate className="text-muted">{boardItem.createdAt}</PostingDate>
-                                </UserInfo>
-                            </UserItem>
-                        </Tweet>
-                    )
-                }
+                <TabContent>
+                    {
+                        board.map((boardItem: any) =>
+                            <Tweet key={`profile_${boardItem.id}`} {...boardItem}>
+                                <UserItem className="user">
+                                    <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
+                                    <UserInfo>
+                                        <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
+                                        <UserId className="text-muted">@{boardItem.userEmail}</UserId>
+                                        <PostingDate className="text-muted">{boardItem.createdAt}</PostingDate>
+                                    </UserInfo>
+                                </UserItem>
+                            </Tweet>
+                        )
+                    }
+                </TabContent>
             </Column>
 
             {
