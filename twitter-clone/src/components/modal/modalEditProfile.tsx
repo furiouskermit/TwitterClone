@@ -395,7 +395,7 @@ export default function ModalEditProfile(props: any){
                                 <UserInfo>
                                     <UserInfoTitle>PASSWORD</UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormInput type="password" name="password" onChange={changeValue} value={newPassword} />
+                                        <FormInput type="password" autoComplete="new-password" name="password" onChange={changeValue} value={newPassword} />
                                     </UserInfoContent>
                                 </UserInfo>
 

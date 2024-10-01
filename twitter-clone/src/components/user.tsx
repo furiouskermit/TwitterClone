@@ -1,4 +1,3 @@
-import styled from "styled-components";
 import { auth } from "../firebase";
 import { useState } from "react";
 import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
@@ -7,8 +6,8 @@ export default function User(props:any){
     const { thumbnail, name, email, date } = props;
     const user = auth.currentUser;
 
-    const [userThumbnail, setThumbnail] = useState(thumbnail);
-    const [userName, setUserName] = useState(name);
+    const [userThumbnail] = useState(thumbnail);
+    const [userName] = useState(name);
 
     const getDate = date === "" ? null : new Date(Number(date));
     const convertNumber = (number: number) => {

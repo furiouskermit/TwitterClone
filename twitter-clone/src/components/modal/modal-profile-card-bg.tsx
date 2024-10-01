@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 import { FormInput } from "../../css/auth-components";
 import { ProfileImgItem, ProfileImgItemInput, ProfileImgItemLabel, ProfileImgList } from "../../css/profile-components";

@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import User from "./user";
-import { TweetInterface } from "./timeline";
 import { auth, db, storage } from "../firebase";
 import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
@@ -73,7 +71,7 @@ const TweetsActionBtn = styled.button`
 const LikedNumber = styled.span``;
 
 export default function Tweet(props: any){
-    const { id, tweet, createdAt, userId, username, userEmail, userThumbnail, photo, liked } = props
+    const { id, tweet, userId, photo, liked } = props
     const user = auth.currentUser;
     const [isLoading, setLoading] = useState(false);
     const [isClicked, setClicked] = useState(false);

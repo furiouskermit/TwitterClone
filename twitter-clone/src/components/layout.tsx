@@ -1,8 +1,7 @@
 import { signOut } from "firebase/auth";
 import { Link, Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import { auth, db } from "../firebase";
-import User from "./user";
+import { auth } from "../firebase";
 import { useEffect, useState } from "react";
 import { updateUser } from "../utils/helpers";
 import { UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
