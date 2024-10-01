@@ -14,6 +14,8 @@ const Wrapper = styled.div`
 `;
 
 export default function PostTweetForm(){
+    const user = auth.currentUser;
+
     const [isLoading, setLoading] = useState(false);
     const [tweet, setTweet] = useState("");
     const [file, setFile] = useState<File | null>(null);
@@ -76,7 +78,7 @@ export default function PostTweetForm(){
     return (
         <Wrapper>
             <PostForm onSubmit={submitTweet}>
-                <User thumbnail="" email="" name="" date="" />
+                <User thumbnail={user?.photoURL ?? ""} email={user?.email} name={user?.displayName ?? ""} date="" />
                 <PostTweet name="tweet" onChange={changeValue} value={tweet} placeholder="What is happening?"></PostTweet>
                 {
                     file ? 

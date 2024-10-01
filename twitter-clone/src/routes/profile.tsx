@@ -1,9 +1,11 @@
 import styled from "styled-components";
 import { auth, db } from "../firebase";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Modal from "../components/modal/modal";
 import ModalEditProfile from "../components/modal/modalEditProfile";
 import { doc, getDoc } from "firebase/firestore";
+import exportAsImage from "../utils/exportAsImage";
+import { updateUser } from "../utils/helpers";
 
 const Wrapper = styled.div``;
 const Column = styled.div`
@@ -23,13 +25,18 @@ const ProfileCardThumbnail = styled.div`
     gap: 20px;
 `;
 const UserThumbnail = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 148px;
     height: 148px;
     border-radius: 100%;
+    background-color: #fff;
     overflow: hidden;
 `;
 const UserImg = styled.img`
     width: 100%;
+    height: 100%;
 `;
 const UserInfo = styled.div``;
 const UserGuildName = styled.span`
@@ -68,9 +75,9 @@ const UserPlaystyleTag = styled.span`
 const UserComment = styled.p`
     min-height: 45px;
     white-space: pre-wrap;
+    line-height: 1.35em;
     font-size: 22px;
 `;
-
 
 const ProfileBackgroundImg = styled.img`
     position: absolute;
@@ -110,6 +117,7 @@ export interface ProfileCardInterface {
 
 export default function Profile(){
     const user = auth.currentUser;
+    const exportImgRef = useRef<HTMLDivElement>(null);
 
     const [profileCardInfo, setProfileCardInfo] = useState<ProfileCardInterface>();
     const [guild, setGuild] = useState("");
@@ -127,13 +135,13 @@ export default function Profile(){
 
         const snapshot = await getDoc(profile);
         const profileDoc = snapshot.data();
-        if(!profileDoc) return;
-        const profileObject = {
-            id: profileDoc.id,
-            playstyle: profileDoc.playstyle,
-            guild: profileDoc.guild,
-            comment: profileDoc.comment,
-            cardBgImg: profileDoc.cardBgImg
+        let profileObject = {};
+        profileObject = {
+            id: profileDoc ? profileDoc.id : user.uid,
+            playstyle: profileDoc ? profileDoc.playstyle : [],
+            guild: profileDoc ? profileDoc.guild : "",
+            comment: profileDoc ? profileDoc.comment : "",
+            cardBgImg: profileDoc ? profileDoc.cardBgImg : ""
         }
         setProfileCardInfo(profileObject);
     };
@@ -141,6 +149,7 @@ export default function Profile(){
     const handleProfileCardInfo = (data: any) => {
         setProfileCardInfo(data);
     };
+
 
     useEffect(()=>{
       fetchProfile();
@@ -150,12 +159,14 @@ export default function Profile(){
         setPlaystyle(profileCardInfo?.playstyle ?? []);
         setComment(profileCardInfo?.comment ?? "");
         setCardBgImg(profileCardInfo?.cardBgImg ?? "");
+
+        updateUser(user, "users");
     }, [profileCardInfo]);
 
     return (
         <Wrapper>
             <Column>
-                <ProfileCard>
+                <ProfileCard ref={exportImgRef}>
                     <ProfileCardThumbnail>
                         <UserThumbnail>
                             <UserImg src={user?.photoURL ?? "/profile/user/UserImg01.png"} />
@@ -184,10 +195,11 @@ export default function Profile(){
                             <UserComment>{comment}</UserComment>
                         </ProfileCardDescContent>
                     </ProfileCardDesc>
+
+                    <ProfileBackgroundImg src={cardBgImg} />
                 </ProfileCard>
-                <ProfileBackgroundImg src={cardBgImg} />
                 <BtnArea>
-                    <ProfileCardBtn type="button">
+                    <ProfileCardBtn type="button" onClick={() => exportAsImage(exportImgRef.current, "test")}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                         </svg>

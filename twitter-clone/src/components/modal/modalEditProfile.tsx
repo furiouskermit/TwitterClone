@@ -3,12 +3,13 @@ import styled from "styled-components";
 import { auth, db } from "../../firebase";
 import { FormInput } from "../../css/auth-components";
 import { signOut, updatePassword, updateProfile } from "firebase/auth";
-import { addDoc, arrayUnion, collection, doc, getDoc, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import Modal from "./modal";
 import ModalProfileCardBg from "./modal-profile-card-bg";
-import { ProfileCardInterface } from "../../routes/profile";
 import { useNavigate } from "react-router-dom";
 import ModalProfileUserImg from "./modal-profile-user-img";
+import { checkMaxLength } from "../../utils/helpers";
+import { changeOutletContext } from "../layout";
 
 const Wrapper = styled.div``;
 const Form = styled.form``;
@@ -66,6 +67,8 @@ const UserImgButton = styled.button`
     display: inline-block;
     width: 120px;
     height: 120px;
+    padding: 0;
+    background-color: #fff;
     border-radius: 100%;
     overflow: hidden;
     cursor: pointer;
@@ -91,6 +94,7 @@ const UserImgButton = styled.button`
 `;
 const UserImg = styled.img`
     width: 100%;
+    height: 100%;
 `;
 
 const UserDesc = styled.div`
@@ -104,6 +108,16 @@ const UserInfo = styled.div`
 `;
 const UserInfoTitle = styled.div`
     font-weight: bold;
+    position: relative;
+`;
+const TextMaxLength = styled.div`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    font-weight: normal;
+    font-size: 13px;
+    color: var(--text-muted);
 `;
 const UserInfoContent = styled.div`
     display: flex;
@@ -137,10 +151,11 @@ const PlaystyleText = styled.span`
 `;
 const FormTextarea = styled.textarea`
     width: 100%;
-    height: 58px;
+    height: 65px;
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: var(--bd-rad);
+    line-height: 1.35em;
     font-size: 15px;
     &:focus {
         outline: none;
@@ -179,6 +194,8 @@ export default function ModalEditProfile(props: any){
     const [isModalOpened, setModalOpened] = useState(false);
     const [subModalType, setSubModalType] = useState("");
 
+    const { changeUserInfo } = changeOutletContext();
+
     const changeValue = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
 
@@ -186,20 +203,13 @@ export default function ModalEditProfile(props: any){
             setNewName(value);
         } else if(name === "password") {
             setNewPassword(value);
-        } else if(name === "comment") {
-            setNewComment(value);
         } else if(name === "guild") {
             setNewGuild(value);
+        } else if(name === "comment") {
+            setNewComment(value);
         }
     };
-    const changeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, files } = e.target;
-        
-        if(files?.length)
-        if(name === "cardBgFile") {
 
-        }
-    };
     const openSubModal = async(e: React.SyntheticEvent<HTMLButtonElement>) => {
         const { type } = e.currentTarget.dataset;
         openModal();
@@ -238,22 +248,28 @@ export default function ModalEditProfile(props: any){
             const profile = await getDoc(doc(db, "profile", user.uid));
             const userDoc = doc(collection(db, "profile"), user.uid);
 
-            // update profile
-            await updateProfile(user, {
-                displayName: newName,
-            })
+            if(user.displayName !== newName || user.photoURL !== newUserImg) {
+                // update profile
+                await updateProfile(user, {
+                    ...(user.displayName !== newName && {
+                        displayName: newName
+                    }),
+                    ...(user.photoURL !== newUserImg && {
+                        photoURL: newUserImg
+                    })
+                })
+            }
 
             // if user's profile data is not stored in firestore, use setDoc()
             // if not, use updateDoc()
             if(!profile.data()) {
-                const docs = await setDoc(userDoc, {
+                await setDoc(userDoc, {
                     id: user.uid,
                     cardBgImg: newCardBgImg,
                     guild: newGuild,
                     playstyle: newPlaystyle,
                     comment: newComment
                 })
-
             } else {
                 // update profile data in firestore
                 await updateDoc(userDoc, {
@@ -273,6 +289,12 @@ export default function ModalEditProfile(props: any){
                 };
                 props.changeEvent(sendData);
             }
+
+            const changedUserInfoObject = {
+                displayName: newName,
+                photoURL: newUserImg
+            };
+            changeUserInfo(changedUserInfoObject);
 
             // update password
             if(newPassword !== "") {
@@ -320,7 +342,7 @@ export default function ModalEditProfile(props: any){
                                 <UserInfo>
                                     <UserInfoTitle>PLAYER NAME</UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormInput type="text" name="name" onChange={changeValue} defaultValue={user?.displayName ?? "Anonymous"} placeholder="Jane Doe" />
+                                        <FormInput type="text" name="name" onChange={changeValue} defaultValue={newName} placeholder="Jane Doe" />
                                     </UserInfoContent>
                                 </UserInfo>
 
@@ -341,7 +363,7 @@ export default function ModalEditProfile(props: any){
                                 <UserInfo>
                                     <UserInfoTitle>GUILD</UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormInput type="text" name="guild" maxLength={20} onChange={changeValue} defaultValue={props.info.guild} placeholder="Newbies" />
+                                        <FormInput type="text" name="guild" maxLength={20} onChange={changeValue} value={newGuild} placeholder="Newbies" />
                                     </UserInfoContent>
                                 </UserInfo>
 
@@ -362,9 +384,12 @@ export default function ModalEditProfile(props: any){
                                 </UserInfo>
 
                                 <UserInfo>
-                                    <UserInfoTitle>COMMENT</UserInfoTitle>
+                                    <UserInfoTitle>
+                                        COMMENT
+                                        <TextMaxLength>{newComment.length}/50</TextMaxLength>
+                                    </UserInfoTitle>
                                     <UserInfoContent>
-                                        <FormTextarea name="comment" onChange={changeValue} defaultValue={props.info.comment}></FormTextarea>
+                                        <FormTextarea name="comment" maxLength={50} value={newComment} onChange={changeValue} onKeyUp={()=>checkMaxLength(newComment, 50, ()=>setNewComment(newComment.slice(0, 50)))}></FormTextarea>
                                     </UserInfoContent>
                                 </UserInfo>
                             </UserDescInner>

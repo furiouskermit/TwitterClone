@@ -12,8 +12,8 @@ export const ProfileImgList = styled.div`
 export const ProfileImgItem = styled.div``;
 export const ProfileImgItemInput = styled.input`
     display: none;
-    &:hover + label,
-    &:checked + label {
+    &:hover + label:not(.custom),
+    &:checked + label:not(.custom) {
         &::before {
             position: absolute;
             width: 100%;
@@ -42,7 +42,7 @@ export const ProfileImgItemLabel = styled.label`
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    &::before {
+    &:not(.custom):before {
         content: '';
         transition: 0.1s;
     }
@@ -54,9 +54,8 @@ export const ProfileImgItemLabel = styled.label`
         transform: translate(-50%, -50%);
         color: #fff;
         z-index: 10;
+    }
+    &:not(.custom) svg {
         display: none;
     }
-`;
-export const ProfileImgItemImg = styled.img`
-    width: 80%;
 `;

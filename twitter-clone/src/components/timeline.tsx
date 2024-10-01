@@ -1,8 +1,9 @@
 import styled from "styled-components";
-import { collection, limit, onSnapshot, orderBy, query, Unsubscribe } from "firebase/firestore";
-import { db } from "../firebase";
+import { collection, doc, getDoc, limit, onSnapshot, orderBy, query, Unsubscribe, updateDoc } from "firebase/firestore";
+import { auth, db } from "../firebase";
 import { useEffect, useState } from "react";
 import Tweet from "./tweet";
+import { changeOutletContext } from "./layout";
 
 const Wrapper = styled.div`
     margin: 30px 0 0;
@@ -21,7 +22,10 @@ export interface TweetInterface {
 };
 
 export default function Timeline(){
+    const user = auth.currentUser;
     const [tweets, setTweets] = useState<TweetInterface[]>([]);
+    const { globalUserInfo } = changeOutletContext();
+
     useEffect(()=>{
         let unsubscribe: Unsubscribe | null = null;
         const fetchTweet = async() => {
@@ -37,9 +41,9 @@ export default function Timeline(){
                         tweet,
                         createdAt,
                         userId,
-                        username,
+                        username: userId === user?.uid ? globalUserInfo.displayName : username,
                         userEmail,
-                        userThumbnail,
+                        userThumbnail: userId === user?.uid ? globalUserInfo.photoURL : userThumbnail,
                         photo,
                         liked,
                         id: doc.id
@@ -49,10 +53,35 @@ export default function Timeline(){
             });
         };
         fetchTweet();
+        
         return () => {
             unsubscribe && unsubscribe();
         };
     }, []);
+
+    useEffect(()=>{
+        if(tweets.length > 0) {
+            // if each info in "user" docs is not equal to user info in "tweets" documents,
+            // update user info in "tweets" doc
+            tweets.forEach(async (item) => {
+                const docRef = doc(db, "users", item.userId);
+                const userDoc = await getDoc(docRef);
+                const userData = userDoc.data();
+                if(userData) {
+                    if(item.username !== userData.displayName || item.userThumbnail !== userData.photoURL) {
+                        await updateDoc(doc(db, "tweets", item.id), {
+                            ...(item.username !== userData.displayName && {
+                                username: userData.displayName
+                            }),
+                            ...(item.userThumbnail !== userData.photoURL && {
+                                userThumbnail: userData.photoURL
+                            }),
+                        })
+                    }
+                }
+            })
+        }
+    }, [tweets])
     
     return (
         <Wrapper>

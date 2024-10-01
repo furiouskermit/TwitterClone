@@ -1,8 +1,11 @@
 import { signOut } from "firebase/auth";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate, useOutletContext } from "react-router-dom";
 import styled from "styled-components";
-import { auth } from "../firebase";
+import { auth, db } from "../firebase";
 import User from "./user";
+import { useEffect, useState } from "react";
+import { updateUser } from "../utils/helpers";
+import { UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
 
 const Wrapper = styled.div`
     display: grid;
@@ -65,21 +68,46 @@ const MenuItem = styled.button`
     }
 `;
 
+type ContextType = { changeUserInfo: (item: any)=>void, globalUserInfo: any };
+
 export default function Layout(){
+    const user = auth.currentUser;
     const navigate = useNavigate();
+    const [globalUserInfo, setUserInfo] = useState({
+        displayName: user?.displayName,
+        photoURL: user?.photoURL
+    });
     const logOut = async() => {
         const confirmText = confirm("Are you sure you want to log out?");
         if(confirmText) {
             await signOut(auth);
             navigate("/login");
         }
+    };
+
+    useEffect(()=>{
+        if(user) {
+            // update user info in "users" collection
+            updateUser(user, "users");
+        }
+    }, []);
+
+    const changeUserInfo = (item: any) => {
+        setUserInfo(item);
     }
+
     return (
         <Wrapper>
             <Nav>
                 <Column>
                     <Link to="/"><Logo src="/logo.png" /></Link>
-                    <User thumbnail="" email="" name="" date="" />
+                    <UserItem className="user">
+                        <UserThumbnail><UserAvatar src={globalUserInfo?.photoURL ?? "/profile/user/UserImg01.png"} /></UserThumbnail>
+                        <UserInfo>
+                            <UserName>{ globalUserInfo.displayName ?? "Anonymous" }</UserName>
+                            <UserId className="text-muted">@{ user?.email?.split('@')[0] }</UserId>
+                        </UserInfo>
+                    </UserItem>
                     <Menu>
                         <Link to="/">
                             <MenuItem>
@@ -133,7 +161,11 @@ export default function Layout(){
                 </Column>
             </Nav>
 
-            <Outlet />
+            <Outlet context={{changeUserInfo, globalUserInfo} satisfies ContextType} />
         </Wrapper>
     );
+}
+
+export function changeOutletContext() {
+    return useOutletContext<ContextType>();
 }
