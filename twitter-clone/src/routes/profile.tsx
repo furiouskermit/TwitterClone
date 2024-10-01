@@ -3,9 +3,10 @@ import { auth, db } from "../firebase";
 import { useEffect, useRef, useState } from "react";
 import Modal from "../components/modal/modal";
 import ModalEditProfile from "../components/modal/modalEditProfile";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query, where } from "firebase/firestore";
 import exportAsImage from "../utils/exportAsImage";
 import { updateUser } from "../utils/helpers";
+import Tweet from "../components/tweet";
 
 const Wrapper = styled.div``;
 const Column = styled.div`
@@ -125,6 +126,8 @@ export default function Profile(){
     const [comment, setComment] = useState("");
     const [cardBgImg, setCardBgImg] = useState("/profile/jobs/cardBgImg0.png");
 
+    const [board, setBoard] = useState<any>([]);
+
     const [isModalOpened, setModalOpened] = useState(false);
     const openModal = async() => {
         setModalOpened(!isModalOpened);
@@ -150,9 +153,33 @@ export default function Profile(){
         setProfileCardInfo(data);
     };
 
+    const fetchBoard = async() => {
+        if(!user) return;
+        const docQuery = query(
+            collection(db, "tweets"),
+            where("userId", "==", user.uid),
+            orderBy("createdAt", "desc")
+        );
+        const tweetDoc = await getDocs(docQuery);
+        const boardInfo = tweetDoc.docs.map((doc) => {
+            const { id, tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
+            return {
+                id,
+                username,
+                createdAt,
+                userThumbnail,
+                userId,
+                userEmail,
+                liked,
+                tweet
+            }
+        })
+        setBoard(boardInfo);
+    };
 
     useEffect(()=>{
       fetchProfile();
+      fetchBoard();
     }, []);
     useEffect(()=>{
         setGuild(profileCardInfo?.guild ?? "");
@@ -214,7 +241,11 @@ export default function Profile(){
                 </BtnArea>
             </Column>
 
-            <Column></Column>
+            <Column>
+                {
+                    board.map((boardItem: any) =><Tweet key={boardItem.id} {...boardItem} />)
+                }
+            </Column>
 
             {
                 isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile clickEvent={openModal} changeEvent={(data: string) => handleProfileCardInfo(data)} info={profileCardInfo}></ModalEditProfile></Modal> : null
