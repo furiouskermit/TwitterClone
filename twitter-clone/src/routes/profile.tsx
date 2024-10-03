@@ -15,6 +15,7 @@ const Column = styled.div`
     position: relative;
     &.column_content {
         margin: 30px 0 0;
+        padding: 0 10px;
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -166,28 +167,30 @@ export default function Profile(){
 
     const changeTab = (data: any) => {
         setTab(data);
-        console.log('tab tab')
     };
-    const fetchBoard = async() => {
+    const fetchBoard = async(tabName: string) => {
         if(!user) return;
         const docQuery = query(
-            collection(db, "tweets"),
+            collection(db, tabName),
             where("userId", "==", user.uid),
             orderBy("createdAt", "desc")
         );
         const tweetDoc = await getDocs(docQuery);
         const boardInfo = tweetDoc.docs.map((doc) => {
-            const { tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
-            return {
-                id: doc.id,
-                username,
-                createdAt: convertDateYYYYMMDD(createdAt),
-                userThumbnail,
-                userId,
-                userEmail,
-                liked,
-                tweet
+            if(tabName === "tweets") {
+                const { tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
+                return {
+                    id: doc.id,
+                    username,
+                    createdAt: convertDateYYYYMMDD(createdAt),
+                    userThumbnail,
+                    userId,
+                    userEmail,
+                    liked,
+                    tweet
+                };
             }
+            
         })
         setBoard(boardInfo);
     };
@@ -197,7 +200,7 @@ export default function Profile(){
 
     useEffect(()=>{
       fetchProfile();
-      fetchBoard();
+      fetchBoard(tab);
     }, []);
 
     useEffect(()=>{
@@ -208,6 +211,10 @@ export default function Profile(){
 
         updateUser(user, "users");
     }, [profileCardInfo]);
+
+    useEffect(()=>{
+        fetchBoard(tab);
+    }, [tab]);
 
     return (
         <Wrapper className="overflow-y">

@@ -96,10 +96,6 @@ export default function Layout(){
         }
     }, []);
 
-    useEffect(()=>{
-        console.log(pathname, 'path changed')
-    }, [pathname]);
-
     const changeUserInfo = (item: any) => {
         setUserInfo(item);
     }
