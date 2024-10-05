@@ -3,7 +3,7 @@ import { auth, db, storage } from "../firebase";
 import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
-import { BtnArea, DeleteTweetImg, FileArea, FileInput, FileLabel, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg } from "../css/tweet-components";
+import { BtnArea, DeleteTweetImg, EditArea, EditAreaBtn, FileArea, FileInput, FileLabel, LikedNumber, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg, TweetsActionBtn, TweetsFooter, TweetsHeader } from "../css/tweet-components";
 
 const Wrapper = styled.div`
     &:not(:last-child) {
@@ -14,29 +14,6 @@ const Tweets = styled.div`
     padding: 20px;
     border: 1px solid var(--border-color);
     border-radius: 20px;
-`;
-
-const TweetsHeader = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-`;
-const EditArea = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 7px;
-`;
-const EditAreaBtn = styled.button`
-    padding: 7px;
-    border-radius: var(--bd-rad);
-    transition: 0.1s;
-    &:hover {
-        background-color: var(--border-color);
-    }
-    & svg {
-        width: 20px;
-        color: var(--text-muted);
-    }
 `;
 
 const TweetsBody = styled.div`
@@ -55,20 +32,6 @@ const TweetsImg = styled.img`
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 20px;
 `;
-
-const TweetsFooter = styled.div``;
-const TweetsActionBtn = styled.button`
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    & svg {
-        width: 20px;
-        &.liked {
-            color: tomato;
-        }
-    }
-`;
-const LikedNumber = styled.span``;
 
 export default function Tweet(props: any){
     const { id, tweet, userId, photo, liked } = props

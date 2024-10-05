@@ -6,6 +6,7 @@ export const GlobalStyles = createGlobalStyle`
     :root {
         --point: #1F60ED;
         --point-rgb: 31, 96, 237;
+        --point-danger: tomato;
         --text-muted: #979797;
         --border-color: #dee2e6;
         --bd-rad: 7px;
@@ -53,22 +54,58 @@ export const GlobalStyles = createGlobalStyle`
         object-fit: cover;
     }
 
-    /* CSS MODULE */
+    /* ### CSS MODULE ### */
     .d-none {
         display: none !important;
     }
     .d-block {
         display: block !important;
     }
+    .d-flex {
+        display: flex !important;
+    }
+    .flex-column {
+        flex-direction: column !important;
+    }
+    .justify-content-start {
+        justify-content: flex-start !important;
+    }
+    .justify-content-center {
+        justify-content: center !important;
+    }
+    .justify-content-end {
+        justify-content: flex-end !important;
+    }
+    .justify-content-between {
+        justify-content: space-between !important;
+    }
+    .justify-content-around {
+        justify-content: space-around !important;
+    }
+    .align-items-start {
+        align-items: flex-start !important;
+    }
+    .align-items-center {
+        align-items: center !important;
+    }
+    .align-items-end {
+        align-items: flex-end !important;
+    }
+
+    /* width & height */
     .w-100 {
         width: 100% !important;
     }
     .h-100 {
         height: 100% !important;
     }
+
+    /* overflow */
     .overflow-y {
         overflow-y: auto !important;
     }
+
+    /* bg */
     .bg-point {
         background-color: var(--point) !important;
         color: #fff !important;
@@ -91,7 +128,18 @@ export const GlobalStyles = createGlobalStyle`
         background-color: var(--text-muted) !important;
         color: #333 !important;
     }
+
+    /* text */
     .text-muted {
         color: var(--text-muted) !important;
+    }
+    .text-danger {
+        color: var(--point-danger) !important;
+    }
+    .fw-normal {
+        font-weight: normal !important;
+    }
+    .fw-bold {
+        font-weight: bold !important;
     }
 `;

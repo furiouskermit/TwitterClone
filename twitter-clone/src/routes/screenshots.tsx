@@ -1,8 +1,15 @@
-import Temporary from "../components/temporary";
+import styled from "styled-components";
+import PostScreenshotsForm from "../components/post-screenshots-form";
+import TimelineScreenshots from "../components/timeline-screenshots";
+
+const Wrapper = styled.div``;
 
 export default function Screenshots(){
     
     return (
-        <Temporary />
+        <Wrapper>
+            <PostScreenshotsForm />
+            <TimelineScreenshots />
+        </Wrapper>
     );
 }

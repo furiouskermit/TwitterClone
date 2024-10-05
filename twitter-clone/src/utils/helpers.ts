@@ -22,6 +22,8 @@ export function convertDateYYYYMMDD(value: number | string) {
     return convertDate;
 };
 
+export const deleteDocument = async(collection: string) => {}
+
 // update documents in "users" collection
 export const updateUser = async (user: any, collection: string) => {
     const docRef = doc(db, collection, user.uid);

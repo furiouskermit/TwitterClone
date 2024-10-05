@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import ModalProfileUserImg from "./modal-profile-user-img";
 import { checkMaxLength, convertDateYYYYMMDD } from "../../utils/helpers";
 import { changeOutletContext } from "../layout";
+import { TextMaxLength } from "../../css/tweet-components";
 
 const Wrapper = styled.div``;
 const Form = styled.form``;
@@ -110,15 +111,7 @@ const UserInfoTitle = styled.div`
     font-weight: bold;
     position: relative;
 `;
-const TextMaxLength = styled.div`
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 0;
-    font-weight: normal;
-    font-size: 13px;
-    color: var(--text-muted);
-`;
+
 const UserInfoContent = styled.div`
     display: flex;
     & :is(input, textarea) {

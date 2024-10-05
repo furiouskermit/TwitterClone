@@ -67,3 +67,60 @@ export const PostTweetBtn = styled.input`
     border: none;
     border-radius: 50px;
 `;
+
+export const TweetsHeader = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+`;
+export const EditArea = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 7px;
+`;
+export const EditAreaBtn = styled.button`
+    padding: 7px;
+    border-radius: var(--bd-rad);
+    transition: 0.1s;
+    &:hover {
+        background-color: var(--border-color);
+    }
+    & svg {
+        width: 20px;
+        color: var(--text-muted);
+    }
+`;
+export const TweetsFooter = styled.div``;
+export const TweetsActionBtn = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    & svg {
+        width: 20px;
+        &.liked {
+            color: tomato;
+        }
+    }
+`;
+export const LikedNumber = styled.span``;
+
+export const TextMaxLength = styled.div`
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 0;
+    font-weight: normal;
+    font-size: 13px;
+    color: var(--text-muted);
+`;
+export const InfoText = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 2px;
+    line-height: 1.3em;
+    font-size: 13px;
+    color: var(--text-muted);
+    & svg {
+        width: 18px;
+    }
+`;
