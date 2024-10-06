@@ -3,7 +3,7 @@ import { BtnArea, InfoText, PostForm, PostTweetBtn, TextMaxLength } from "../css
 import User from "./user";
 import { auth, db, storage } from "../firebase";
 import { useState } from "react";
-import { addDoc, collection, doc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { checkMaxLength } from "../utils/helpers";
 import { PostFormBox, PostFormItem, PostFormItemContent, PostFormItemTitle, PostScreenshotInput, PostScreenshots, PostScreenshotsFile, PostScreenshotsFileInput, PostScreenshotsFileLabel, ScreenshotImg } from "../css/screenshots-components";
