@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { auth, db } from "../../firebase";
 import { FormInput } from "../../css/auth-components";
 import { signOut, updatePassword, updateProfile } from "firebase/auth";
-import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, orderBy, query, setDoc, updateDoc, where } from "firebase/firestore";
 import Modal from "./modal";
 import ModalProfileCardBg from "./modal-profile-card-bg";
 import { useNavigate } from "react-router-dom";
@@ -161,7 +161,7 @@ export default function ModalEditProfile(props: any){
     const playstyleType = [
         {
             id: 0,
-            name: "hard_contents"
+            name: "raid"
         },
         {
             id: 1,
@@ -256,6 +256,7 @@ export default function ModalEditProfile(props: any){
                 const docQuery = query(
                     collection(db, props.currentTab),
                     where("userId", "==", user.uid),
+                    orderBy("createdAt", "desc"),
                 );
                 const tweetDoc = await getDocs(docQuery);
                 tweetDoc.docs.forEach(async (item) => {
@@ -273,21 +274,40 @@ export default function ModalEditProfile(props: any){
                         }
                     }
                 });
+
                 const tweetInfo = tweetDoc.docs.map((item) => {
                     if(item.data()){
-                        const { tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = item.data();
-                        return {
-                            id: item.id,
-                            tweet,
-                            username: username !== newName ? newName : username,
-                            userId,
-                            createdAt: convertDateYYYYMMDD(createdAt),
-                            userThumbnail: userThumbnail !== newUserImg ? newUserImg : userThumbnail,
-                            userEmail,
-                            liked
+                        if(props.currentTab === "tweets") {
+                            const { tweet, photo, createdAt, userId, username, userThumbnail, userEmail, liked } = item.data();
+                            return {
+                                id: item.id,
+                                tweet,
+                                photo: photo ? photo : null,
+                                createdAt: convertDateYYYYMMDD(createdAt),
+                                userId,
+                                username: username !== newName ? newName : username,
+                                userThumbnail: userThumbnail !== newUserImg ? newUserImg : userThumbnail,
+                                userEmail,
+                                liked
+                            };
+                        } else if(props.currentTab === "screenshots") {
+                            const { comment, hashtag, photo, createdAt, userId, username, userThumbnail, userEmail, liked } = item.data();
+                            return {
+                                id: item.id,
+                                comment,
+                                hashtag,
+                                photo,
+                                createdAt,
+                                userId,
+                                username,
+                                userThumbnail,
+                                userEmail,
+                                liked,
+                            }
                         }
-                    }
-                })
+                    };
+                });
+
                 props.changeBoard(tweetInfo);
             }
 

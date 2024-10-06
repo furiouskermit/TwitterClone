@@ -1,26 +1,95 @@
 import styled from "styled-components";
-import { EditArea, EditAreaBtn, TweetsHeader } from "../css/tweet-components";
+import { EditArea, EditAreaBtn, LikedNumber, TweetsActionBtn, TweetsBody, TweetsFooter, TweetsHeader } from "../css/tweet-components";
 import { auth, db } from "../firebase";
 import { useState } from "react";
-import { deleteDoc, doc } from "firebase/firestore";
+import { deleteDocument } from "../utils/helpers";
+import { arrayRemove, arrayUnion, collection, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import PostScreenshotsForm from "./post-screenshots-form";
 
-const Wrapper = styled.div``;
-const Screenshots = styled.div``;
+const Wrapper = styled.div`
+    &:not(:last-child) {
+        margin: 0 0 15px;
+    }
+`;
+const Screenshots = styled.div`
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+`;
+const ScreenshotImg = styled.img`
+    border-radius: 14px;
+`;
+const ScreenshotComment = styled.p`
+    margin: 10px 0 0;
+    padding: 0 10px;
+    white-space: pre-wrap;
+    font-weight: bold;
+    font-size: 20px;
+`;
+const ScreenshotHashtag = styled.div`
+    margin: 12px 0 0;
+`;
+const Hashtag = styled.span`
+    display: inline-block;
+    margin-right: 4px;
+    padding: 6px 8px;
+    border-radius: 100px;
+    background-color: rgba(var(--point-rgb), 0.1);
+    font-size: 13px;
+    color: var(--point);
+`;
 
 export default function TweetScreenshots(props: any){
     const user = auth.currentUser;
-    const { userId } = props;
+    const { userId, id, photo, comment, hashtag, liked } = props;
 
     const [isClicked, setClicked] = useState(false);
+    const [isLiked, setLiked] = useState(false);
 
     const editTweet = async() => {
         setClicked(true);
     };
     const deleteTweet = async() => {
         setClicked(true);
-
-        // await deleteDoc(doc(db, "screenshots", user?.uid));
+        deleteDocument("screenshots", id, photo);
     };
+    const changeLiked = async(status: string) => {
+        if(!user) return;
+        setLiked(!isLiked);
+        const docRef = doc(db, "screenshots", id);
+        await updateDoc(docRef, {
+            liked: status === "liked" ? arrayRemove(user.uid) : arrayUnion(user.uid)
+        })
+
+        if(Object.keys(props).length > 0 && props.changeBoard) {
+            const docQuery = query(
+                collection(db, "screenshots"),
+                orderBy("createdAt", "desc"),
+                where("userId", "==", user.uid)
+            );
+            const updatedDoc = await getDocs(docQuery);
+            const docData = updatedDoc.docs.map((doc) => {
+                const { comment, hashtag, photo, createdAt, userId, username, userThumbnail, userEmail, liked } = doc.data();
+                return {
+                    id: doc.id,
+                    comment,
+                    hashtag,
+                    photo,
+                    createdAt,
+                    userId,
+                    username,
+                    userThumbnail,
+                    userEmail,
+                    liked,
+                }
+            });
+            props.changeBoard(docData);
+        }
+    };
+    const sendParentToChildEvent = () => {
+        setClicked(!isClicked);
+    };
+
     return (
         <Wrapper>
             <Screenshots>
@@ -42,10 +111,46 @@ export default function TweetScreenshots(props: any){
                         </EditArea>
                         : null
                     }
-                    
                 </TweetsHeader>
+                {
+                    !isClicked ?
+                    <>
+                        <TweetsBody>
+                            <ScreenshotImg src={photo} className="w-100" />
+                            {
+                                comment !== "" ?
+                                <ScreenshotComment>{ comment }</ScreenshotComment>
+                                : null
+                            }
+                            {
+                                hashtag && hashtag.length > 0 ? 
+                                <ScreenshotHashtag>
+                                    {
+                                        hashtag.map((item: string, index: number) => item !== "" ? <Hashtag key={`${id}_${item}_${index}`}>#{item}</Hashtag> : null)
+                                    }
+                                </ScreenshotHashtag>
+                                : null
+                            }
+                        </TweetsBody>
+                        <TweetsFooter>
+                            <TweetsActionBtn type="button" onClick={() => changeLiked(isLiked ? "liked" : "unliked")}>
+                                    {
+                                        user != null && liked.includes(user.uid) ?
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6 liked">
+                                            <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+                                        </svg>
+                                        :
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                                        </svg>
+                                    }
+                                    <LikedNumber className="text-muted">{ liked ? liked.length : 0 }</LikedNumber>
+                                </TweetsActionBtn>
+                        </TweetsFooter>
+                    </>
+                    : <PostScreenshotsForm {...props} clickEvent={sendParentToChildEvent} />
+                }
             </Screenshots>
-
         </Wrapper>
     );
 }

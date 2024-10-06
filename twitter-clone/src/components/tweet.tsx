@@ -1,9 +1,9 @@
 import styled from "styled-components";
 import { auth, db, storage } from "../firebase";
-import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
-import { BtnArea, DeleteTweetImg, EditArea, EditAreaBtn, FileArea, FileInput, FileLabel, LikedNumber, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg, TweetsActionBtn, TweetsFooter, TweetsHeader } from "../css/tweet-components";
+import { BtnArea, DeleteTweetImg, EditArea, EditAreaBtn, FileArea, FileInput, FileLabel, LikedNumber, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg, TweetsActionBtn, TweetsBody, TweetsFooter, TweetsHeader } from "../css/tweet-components";
 
 const Wrapper = styled.div`
     &:not(:last-child) {
@@ -15,12 +15,8 @@ const Tweets = styled.div`
     border: 1px solid var(--border-color);
     border-radius: 20px;
 `;
-
-const TweetsBody = styled.div`
-    margin: 10px 0 0;
-`;
 const TweetsContent = styled.div`
-    padding: 10px;
+    padding: 10px 10px 0;
     line-height: 1.45em;
     white-space: pre-wrap;
     font-size: 16px;
@@ -28,7 +24,7 @@ const TweetsContent = styled.div`
 const TweetsImg = styled.img`
     display: block;
     width: 100%;
-    margin: 10px 0 0;
+    margin: 10px 0;
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 20px;
 `;
@@ -63,8 +59,32 @@ export default function Tweet(props: any){
         setLiked(!isLiked);
         const docs = doc(db, "tweets", id);
         await updateDoc(docs, {
-            liked: type === "liked" ? arrayUnion(user.uid) : arrayRemove(user.uid)
+            liked: type === "liked" ? arrayRemove(user.uid) : arrayUnion(user.uid)
         });
+
+        if(Object.keys(props).length > 0 && props.changeBoard) {
+            const docQuery = query(
+                collection(db, "tweets"),
+                orderBy("createdAt", "desc"),
+                where("userId", "==", user.uid)
+            );
+            const updatedDoc = await getDocs(docQuery);
+            const docData = updatedDoc.docs.map((doc) => {
+                const { tweets, photo, createdAt, userId, username, userThumbnail, userEmail, liked } = doc.data();
+                return {
+                    id: doc.id,
+                    tweets,
+                    photo,
+                    createdAt,
+                    userId,
+                    username,
+                    userThumbnail,
+                    userEmail,
+                    liked,
+                }
+            });
+            props.changeBoard(docData);
+        }
     };
     const changeValue = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setNewTweeet(e.target.value);
@@ -107,7 +127,7 @@ export default function Tweet(props: any){
             let url = null;
             if(newFile) {
                 if(typeof(newFile) !== "string") {
-                    locationRef = ref(storage, `tweets/${user?.uid}/`);
+                    locationRef = ref(storage, `tweets/${user?.uid}/${id}`);
                     result = await uploadBytes(locationRef, newFile);
                     url = await getDownloadURL(result.ref);
                 } else {

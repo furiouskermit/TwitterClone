@@ -7,7 +7,7 @@ const Wrapper = styled.div``;
 export default function Screenshots(){
     
     return (
-        <Wrapper>
+        <Wrapper className="overflow-y">
             <PostScreenshotsForm />
             <TimelineScreenshots />
         </Wrapper>

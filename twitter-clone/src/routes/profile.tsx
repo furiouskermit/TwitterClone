@@ -9,6 +9,8 @@ import { convertDateYYYYMMDD, updateUser } from "../utils/helpers";
 import Tweet from "../components/tweet";
 import Tab from "../components/Tab";
 import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
+import TweetScreenshots from "../components/tweet-screenshots";
+import NoPost from "../components/no-post";
 
 const Wrapper = styled.div``;
 const Column = styled.div`
@@ -178,16 +180,31 @@ export default function Profile(){
         const tweetDoc = await getDocs(docQuery);
         const boardInfo = tweetDoc.docs.map((doc) => {
             if(tabName === "tweets") {
-                const { tweet, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
+                const { tweet, photo, username, createdAt, userThumbnail, userId, userEmail, liked } = doc.data();
                 return {
                     id: doc.id,
-                    username,
+                    username: username === user.displayName ? username : user.displayName,
                     createdAt: convertDateYYYYMMDD(createdAt),
-                    userThumbnail,
+                    userThumbnail: userThumbnail === user.photoURL ? userThumbnail : user.photoURL,
                     userId,
                     userEmail,
                     liked,
-                    tweet
+                    tweet,
+                    photo: photo ? photo : null,
+                };
+            } else if(tabName === "screenshots") {
+                const { photo, username, createdAt, userThumbnail, userId, userEmail, liked, comment, hashtag } = doc.data();
+                return {
+                    id: doc.id,
+                    username: username === user.displayName ? username : user.displayName,
+                    createdAt,
+                    userThumbnail: userThumbnail === user.photoURL ? userThumbnail : user.photoURL,
+                    userId,
+                    userEmail,
+                    liked,
+                    photo,
+                    comment,
+                    hashtag
                 };
             }
             
@@ -271,18 +288,36 @@ export default function Profile(){
                 <Tab tabCnt={4} currentTab={tab} tabTitle={["Home", "Screenshots", "Spoilers", "Tips"]} tabValue={["tweets", "screenshots", "spoilers", "tips"]} changeEvent={(data: any) => changeTab(data)} />
                 <TabContent>
                     {
-                        board.map((boardItem: any) =>
-                            <Tweet key={`profile_${boardItem.id}`} {...boardItem}>
-                                <UserItem className="user">
-                                    <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
-                                    <UserInfo>
-                                        <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
-                                        <UserId className="text-muted">@{boardItem.userEmail}</UserId>
-                                        <PostingDate className="text-muted">{boardItem.createdAt}</PostingDate>
-                                    </UserInfo>
-                                </UserItem>
-                            </Tweet>
-                        )
+                        tab === "tweets" ? 
+                            board.length === 0 ? <NoPost /> :
+                            board.map((boardItem: any) =>
+                                <Tweet key={`profile_${boardItem.id}`} {...boardItem} changeBoard={(data: any) => changeBoard(data)}>
+                                    <UserItem className="user">
+                                        <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
+                                        <UserInfo>
+                                            <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
+                                            <UserId className="text-muted">@{boardItem.userEmail}</UserId>
+                                            <PostingDate className="text-muted">{boardItem.createdAt}</PostingDate>
+                                        </UserInfo>
+                                    </UserItem>
+                                </Tweet>
+                            )
+                        : tab === "screenshots" ? 
+                            !board ? <NoPost /> :
+                            board.map((boardItem: any) => 
+                                <TweetScreenshots key={`profile_${boardItem.id}`} {...boardItem} changeBoard={(data: any) => changeBoard(data)}>
+                                    <UserItem className="user">
+                                        <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
+                                        <UserInfo>
+                                            <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
+                                            <UserId className="text-muted">@{boardItem.userEmail}</UserId>
+                                            <PostingDate className="text-muted">{convertDateYYYYMMDD(boardItem.createdAt)}</PostingDate>
+                                        </UserInfo>
+                                    </UserItem>
+                                </TweetScreenshots>
+                            )
+                        : tab === "tips" ? <></>
+                        : null
                     }
                 </TabContent>
             </Column>

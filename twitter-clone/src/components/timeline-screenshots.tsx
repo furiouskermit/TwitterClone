@@ -7,7 +7,9 @@ import { changeOutletContext } from "./layout";
 import { convertDateYYYYMMDD } from "../utils/helpers";
 import TweetScreenshots from "./tweet-screenshots";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+    margin: 30px 0 0;
+`;
 
 export interface screenshotInterface {
     id: string,

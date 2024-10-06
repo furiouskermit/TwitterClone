@@ -40,7 +40,7 @@ export default function PostTweetForm(){
         e.preventDefault();
 
         const user = auth.currentUser;
-        if(!user || isLoading || (tweet.length === 0 && !file)) return;
+        if(!user || isLoading || tweet.length === 0) return;
         if(tweet.length > 140) {
             alert("You cannot type more than 140 letters!");
             return;
@@ -59,7 +59,7 @@ export default function PostTweetForm(){
             });
 
             if(file) {
-                const locationRef = ref(storage, `tweets/${user.uid}/`);
+                const locationRef = ref(storage, `tweets/${user.uid}/${docs.id}/`);
                 const result = await uploadBytes(locationRef, file);
                 const url = await getDownloadURL(result.ref);
 

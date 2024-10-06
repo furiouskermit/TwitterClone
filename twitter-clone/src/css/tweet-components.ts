@@ -90,7 +90,12 @@ export const EditAreaBtn = styled.button`
         color: var(--text-muted);
     }
 `;
-export const TweetsFooter = styled.div``;
+export const TweetsBody = styled.div`
+    margin: 10px 0 0;
+`;
+export const TweetsFooter = styled.div`
+    margin: 10px 0 0;
+`;
 export const TweetsActionBtn = styled.button`
     display: flex;
     align-items: center;

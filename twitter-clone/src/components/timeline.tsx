@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import Tweet from "./tweet";
 import { changeOutletContext } from "./layout";
 import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThumbnail } from "../css/user-components";
+import { convertDateYYYYMMDD } from "../utils/helpers";
 
 const Wrapper = styled.div`
     margin: 30px 0 0;
@@ -94,7 +95,7 @@ export default function Timeline(){
                         <UserInfo>
                             <UserName>{tweet.username === "" ? "Anonymous" : tweet.username}</UserName>
                             <UserId className="text-muted">@{tweet.userEmail}</UserId>
-                            <PostingDate className="text-muted">{tweet.createdAt}</PostingDate>
+                            <PostingDate className="text-muted">{convertDateYYYYMMDD(tweet.createdAt)}</PostingDate>
                         </UserInfo>
                     </UserItem>
                 </Tweet>)
