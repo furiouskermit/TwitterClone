@@ -11,6 +11,12 @@ const Wrapper = styled.div`
     padding: 20px;
     border: 1px solid var(--border-color);
     border-radius: 20px;
+
+    @media (max-width: 768px) {
+        border-radius: 0px;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+    }
 `;
 
 export default function PostTweetForm(){

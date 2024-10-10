@@ -15,6 +15,11 @@ const Wrapper = styled.div`
     margin: 0 auto;
     padding: 20px;
     overflow: hidden;
+    @media (max-width: 768px) {
+        display: block;
+        grid-template-columns: 1fr;
+        padding: 0;
+    }
 `;
 const Nav = styled.div`
     display: flex;
@@ -24,6 +29,18 @@ const Nav = styled.div`
     padding: 20px;
     background-color: #fafbfc;
     border-radius: 20px;
+    @media (max-width: 768px) {
+        display: block;
+        position: fixed;
+        width: calc(100% - 20px);
+        height: auto;
+        bottom: var(--mobile-px);
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 10px;
+        border-radius: 100px;
+        z-index: 10;
+    }
 `;
 const Column = styled.div`
     & > a {
@@ -35,6 +52,12 @@ const Column = styled.div`
         padding: 15px 0 0;
         border-top: 2px dotted var(--border-color);
     }
+    @media (max-width: 768px) {
+        & > a,
+        & .user {
+            display: none;
+        }
+    }
 `;
 const Logo = styled.img`
     width: 100px;
@@ -45,6 +68,9 @@ const Menu = styled.div`
     & > a {
         width: 100%;
         text-decoration: none;
+    }
+    @media (max-width: 768px) {
+        flex-direction: row;
     }
 `;
 const MenuItem = styled.button`
@@ -68,6 +94,17 @@ const MenuItem = styled.button`
     }
     & svg {
         width: 20px;
+    }
+    @media (max-width: 768px) {
+        display: block;
+        padding: 10px 4px;
+        font-size: 0px;
+        &.logout {
+            display: none;
+        }
+        &.active {
+            border-radius: 100px;
+        }
     }
 `;
 
@@ -129,22 +166,22 @@ export default function Layout(){
                                 screenshots
                             </MenuItem>
                         </Link>
-                        <Link to="/spoilers">
+                        {/* <Link to="/spoilers">
                             <MenuItem className={pathname.includes("/spoilers") ? "active" : ""}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
                                 </svg>
                                 spoilers
                             </MenuItem>
-                        </Link>
-                        <Link to="/tips">
+                        </Link> */}
+                        {/* <Link to="/tips">
                             <MenuItem className={pathname.includes("/tips") ? "active" : ""}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
                                 </svg>
                                 tips
                             </MenuItem>
-                        </Link>
+                        </Link> */}
                         <Link to="/profile">
                             <MenuItem className={pathname.includes("/profile") ? "active" : ""}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
@@ -156,7 +193,7 @@ export default function Layout(){
                     </Menu>
                 </Column>
                 <Column>
-                    <MenuItem onClick={logOut}>
+                    <MenuItem onClick={logOut} className="logout">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                         </svg>

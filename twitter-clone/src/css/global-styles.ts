@@ -10,6 +10,9 @@ export const GlobalStyles = createGlobalStyle`
         --text-muted: #979797;
         --border-color: #dee2e6;
         --bd-rad: 7px;
+
+        --mobile-px: 10px;
+        --mobile-pb: calc(60px + 10px + 10px);
     }
     * {
         box-sizing: border-box;

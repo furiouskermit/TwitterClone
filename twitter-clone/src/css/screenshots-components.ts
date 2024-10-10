@@ -5,9 +5,24 @@ export const PostScreenshots = styled.div`
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
     margin: 20px 0 0;
+    @media (max-width: 768px) {
+        display: block;
+    }
 `;
-export const PostFormBox = styled.div``;
-export const PostFormItem = styled.div``;
+export const PostFormBox = styled.div`
+        @media (max-width: 768px) {
+            &:not(:last-child) {
+                margin: 0 0 15px;
+            }
+        }
+`;
+export const PostFormItem = styled.div`
+    @media (max-width: 768px) {
+        &:not(:last-child) {
+            margin: 0 0 10px;
+        }
+    }
+`;
 export const PostFormItemTitle = styled.div`
     margin: 0 0 5px;
     font-weight: bold;
@@ -40,6 +55,12 @@ export const PostScreenshotsFileLabel = styled.label`
     & svg {
         width: 40px;
         color: var(--text-muted);
+    }
+    @media (max-width: 768px) {
+        height: 130px;
+        & svg {
+            width: 30px;
+        }
     }
 `;
 export const PostScreenshotInput = styled.input`

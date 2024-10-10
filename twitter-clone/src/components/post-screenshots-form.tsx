@@ -14,6 +14,13 @@ const Wrapper = styled.div`
         border: 1px solid var(--border-color);
         border-radius: 20px;
     }
+    @media (max-width: 768px) {
+        &:not(.edit-form) {
+            border-radius: 0px;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+        }
+    }
 `;
 
 export default function PostScreenshotsForm(props: any){

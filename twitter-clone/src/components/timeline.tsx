@@ -9,6 +9,9 @@ import { convertDateYYYYMMDD } from "../utils/helpers";
 
 const Wrapper = styled.div`
     margin: 30px 0 0;
+    @media (max-width: 768px) {
+        margin: 0;
+    }
 `;
 
 export interface TweetInterface {

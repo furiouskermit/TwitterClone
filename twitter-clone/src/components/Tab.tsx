@@ -5,19 +5,13 @@ const Wrapper = styled.div`
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
     border-radius: 100px;
 `;
-const TabMenu = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    align-items: center;
-    text-align: center;
-`;
 const TabBtn = styled.button`
     width: 100%;
     padding: 12px 0;
     border-radius: 100px;
     font-weight: bold;
-    transition: 0.2s;
     color: var(--text-muted);
+    transition: 0.2s;
     &.active {
         background-color: rgba(var(--point-rgb), 0.18);
         color: var(--point);
@@ -25,10 +19,19 @@ const TabBtn = styled.button`
     &:not(.active):hover {
         background-color: var(--border-color);
     }
+    @media (max-width: 768px)  {
+        font-size: 14px;
+    }
 `;
 
 export default function Tab(props: any){
     const { tabCnt, tabTitle, tabValue, currentTab, changeEvent } = props;
+    const TabMenu = styled.div`
+        display: grid;
+        grid-template-columns: repeat(${tabCnt}, 1fr);
+        align-items: center;
+        justify-content: space-evenly;
+    `;
     return (
         <Wrapper>
             <TabMenu>

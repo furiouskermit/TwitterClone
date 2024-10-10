@@ -12,7 +12,12 @@ import { PostingDate, UserAvatar, UserId, UserInfo, UserItem, UserName, UserThum
 import TweetScreenshots from "../components/tweet-screenshots";
 import NoPost from "../components/no-post";
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+    @media (max-width: 768px) {
+        height: 100%;
+        padding: 0 0 var(--mobile-pb);
+    }
+`;
 const Column = styled.div`
     position: relative;
     &.column_content {
@@ -30,12 +35,20 @@ const ProfileCard = styled.div`
     background-color: #121A2B;
     border-radius: 20px;
     color: #fff;
+
+    @media (max-width: 768px) {
+        padding: 20px;
+        border-radius: 0px;
+    }
 `;
 const ProfileCardThumbnail = styled.div`
     margin: 0 0 30px;
     display: flex;
     align-items: center;
     gap: 20px;
+    @media (max-width: 768px) {
+        gap: 13px;
+    }
 `;
 const CardUserThumbnail = styled.div`
     display: flex;
@@ -46,35 +59,62 @@ const CardUserThumbnail = styled.div`
     border-radius: 100%;
     background-color: #fff;
     overflow: hidden;
+    @media (max-width: 768px) {
+        width: 85px;
+        height: 85px;
+    }
+
 `;
 const UserImg = styled.img`
     width: 100%;
     height: 100%;
 `;
-const CardUserInfo = styled.div``;
+const CardUserInfo = styled.div`
+    @media (max-width: 768px) {
+        width: calc(100% - calc(13px + 90px));
+    }
+`;
 const UserGuildName = styled.span`
     display: inline-block;
     margin: 0 0 15px;
     padding: 5px 10px;
     background-color: var(--point);
     border-radius: 50px;
+    @media (max-width: 768px) {
+        margin: 0 0 12px;
+        font-size: 13px;
+    }
 `;
 const CardUserName = styled.h3`
     margin: 0 0 15px;
     font-weight: bold;
     font-size: 42px;
+    @media (max-width: 768px) {
+        margin: 0 0 8px;
+        font-size: 24px;
+    }
+
 `;
-const UserEmail = styled.div``;
+const UserEmail = styled.div`
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
+`;
 const ProfileCardDesc = styled.div`
     margin: 20px 0 0;
 `;
 const ProfileCardDescTitle = styled.div`
     margin: 0 0 7px;
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
 `;
 const ProfileCardDescContent = styled.div``;
 const UserPlaystyle = styled.div`
     margin: 10px 0 0;
-    font-size: 22px;
+    @media (max-width: 768px) {
+        max-width: calc(100% - 100px);
+    }
 `;
 const UserPlaystyleTag = styled.span`
     display: inline-block;
@@ -83,18 +123,31 @@ const UserPlaystyleTag = styled.span`
     border: 1px solid #fff;
     border-radius: 50px;
     font-size: 18px;
+    @media (max-width: 768px) {
+        font-size: 16px;
+    }
 `;
 const UserComment = styled.p`
     min-height: 45px;
     white-space: pre-wrap;
     line-height: 1.35em;
     font-size: 22px;
+    @media (max-width: 768px) {
+        max-width: calc(100% - 100px);
+        font-size: 18px;
+    }
 `;
 const ProfileBackgroundImg = styled.img`
     position: absolute;
     width: 150px;
     bottom: 20px;
     right: 15px;
+    @media (max-width: 768px) {
+        width: 100px;
+        right: 10px;
+        bottom: 80px;
+    }
+
 `;
 const BtnArea = styled.div`
     position: absolute;
@@ -103,10 +156,19 @@ const BtnArea = styled.div`
     display: flex;
     align-items: center;
     gap: 7px;
+
+    @media (max-width: 768px) {
+        position: static;
+        top: unset;
+        left: unset;
+        padding: 0 20px 20px;
+        background-color: #121A2B;
+    }
 `;
 const ProfileCardBtn = styled.button`
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     padding: 7px 15px;
     border: 1px solid #fff;
@@ -115,6 +177,9 @@ const ProfileCardBtn = styled.button`
     color: #fff;
     & svg {
         width: 20px;
+    }
+    @media (max-width: 768px) {
+        flex: 1;
     }
 `;
 
@@ -285,7 +350,9 @@ export default function Profile(){
             </Column>
 
             <Column className="column_content">
-                <Tab tabCnt={4} currentTab={tab} tabTitle={["Home", "Screenshots", "Spoilers", "Tips"]} tabValue={["tweets", "screenshots", "spoilers", "tips"]} changeEvent={(data: any) => changeTab(data)} />
+                {/* <Tab tabCnt={4} currentTab={tab} tabTitle={["Home", "Screenshots", "Spoilers", "Tips"]} tabValue={["tweets", "screenshots", "spoilers", "tips"]} changeEvent={(data: any) => changeTab(data)} /> */}
+                <Tab tabCnt={2} currentTab={tab} tabTitle={["Home", "Screenshots"]} tabValue={["tweets", "screenshots"]} changeEvent={(data: any) => changeTab(data)} />
+                
                 <TabContent>
                     {
                         tab === "tweets" ? 

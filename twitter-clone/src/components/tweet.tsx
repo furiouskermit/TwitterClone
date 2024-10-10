@@ -9,11 +9,21 @@ const Wrapper = styled.div`
     &:not(:last-child) {
         margin: 0 0 15px;
     }
+    @media (max-width: 768px) {
+       &:not(:last-child) {
+            margin: 0;
+            border-bottom: 1px solid var(--border-color);
+       }
+    }
 `;
 const Tweets = styled.div`
     padding: 20px;
     border: 1px solid var(--border-color);
     border-radius: 20px;
+    @media (max-width: 768px) {
+        border: none;
+        border-radius: 0px;
+    }
 `;
 const TweetsContent = styled.div`
     padding: 10px 10px 0;

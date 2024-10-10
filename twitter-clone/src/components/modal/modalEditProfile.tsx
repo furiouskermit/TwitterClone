@@ -44,11 +44,12 @@ const CardBgButton = styled.button`
     &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0,0,0,0.75);
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0,0,0,0.55);
         border-radius: var(--bd-rad) var(--bd-rad) 0 0;
     }
 `;
@@ -81,7 +82,7 @@ const UserImgButton = styled.button`
         top: 0;
         left: 0;
         border-radius: 100%;
-        background-color: rgba(0,0,0,0.75);
+        background-color: rgba(0,0,0,0.55);
     }
     & svg {
         position: absolute;
