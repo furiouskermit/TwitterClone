@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { EditArea, EditAreaBtn, LikedNumber, TweetsActionBtn, TweetsBody, TweetsFooter, TweetsHeader } from "../css/tweet-components";
 import { auth, db, storage } from "../firebase";
 import { useState } from "react";
-import { arrayRemove, arrayUnion, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import PostScreenshotsForm from "./post-screenshots-form";
 import { deleteObject, ref } from "firebase/storage";
 
