@@ -76,7 +76,7 @@ export default function TimelineScreenshots(){
                             <UserThumbnail><UserAvatar src={screenshot.userThumbnail === "" ? "/profile/user/UserImg01.png" : screenshot.userThumbnail} /></UserThumbnail>
                             <UserInfo>
                                 <UserName>{screenshot.username === "" ? "Anonymous" : screenshot.username}</UserName>
-                                <UserId className="text-muted">@{screenshot.userEmail}</UserId>
+                                <UserId className="text-muted">{screenshot.userEmail}</UserId>
                                 <PostingDate className="text-muted">{convertDateYYYYMMDD(screenshot.createdAt)}</PostingDate>
                             </UserInfo>
                         </UserItem>

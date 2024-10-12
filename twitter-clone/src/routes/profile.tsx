@@ -206,6 +206,7 @@ export default function Profile(){
 
     const [tab, setTab] = useState("tweets")
     const [board, setBoard] = useState<any>([]);
+    const [boardStatus, setBoardStatus] = useState(false);
 
     const [isModalOpened, setModalOpened] = useState(false);
     const openModal = async() => {
@@ -276,8 +277,8 @@ export default function Profile(){
         })
         setBoard(boardInfo);
     };
-    const changeBoard = (data: any) => {
-        setBoard(data);
+    const changeBoardStatus = () => {
+        setBoardStatus(!boardStatus);
     }
 
     useEffect(()=>{
@@ -297,6 +298,10 @@ export default function Profile(){
     useEffect(()=>{
         fetchBoard(tab);
     }, [tab]);
+
+    useEffect(()=>{
+        fetchBoard(tab);
+    }, [boardStatus])
 
     return (
         <Wrapper className="overflow-y">
@@ -358,26 +363,26 @@ export default function Profile(){
                         tab === "tweets" ? 
                             board.length === 0 ? <NoPost /> :
                             board.map((boardItem: any) =>
-                                <Tweet key={`profile_${boardItem.id}`} {...boardItem} changeBoard={(data: any) => changeBoard(data)}>
+                                <Tweet key={`profile_${boardItem.id}`} {...boardItem} changeBoardStatus={changeBoardStatus}>
                                     <UserItem className="user">
                                         <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
                                         <UserInfo>
                                             <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
-                                            <UserId className="text-muted">@{boardItem.userEmail}</UserId>
+                                            <UserId className="text-muted">{boardItem.userEmail}</UserId>
                                             <PostingDate className="text-muted">{boardItem.createdAt}</PostingDate>
                                         </UserInfo>
                                     </UserItem>
                                 </Tweet>
                             )
                         : tab === "screenshots" ? 
-                            !board ? <NoPost /> :
+                            board.length === 0 ? <NoPost /> :
                             board.map((boardItem: any) => 
-                                <TweetScreenshots key={`profile_${boardItem.id}`} {...boardItem} changeBoard={(data: any) => changeBoard(data)}>
+                                <TweetScreenshots key={`profile_${boardItem.id}`} {...boardItem} changeBoardStatus={changeBoardStatus}>
                                     <UserItem className="user">
                                         <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
                                         <UserInfo>
                                             <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
-                                            <UserId className="text-muted">@{boardItem.userEmail}</UserId>
+                                            <UserId className="text-muted">{boardItem.userEmail}</UserId>
                                             <PostingDate className="text-muted">{convertDateYYYYMMDD(boardItem.createdAt)}</PostingDate>
                                         </UserInfo>
                                     </UserItem>
@@ -390,7 +395,7 @@ export default function Profile(){
             </Column>
 
             {
-                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile clickEvent={openModal} changeEvent={(data: string) => handleProfileCardInfo(data)} info={profileCardInfo} currentTab={tab} changeTab={(data: any) => changeTab(data)} changeBoard={(data: any) => changeBoard(data)}></ModalEditProfile></Modal> : null
+                isModalOpened ? <Modal modalType="full" clickEvent={openModal}  modalTitle=""><ModalEditProfile clickEvent={openModal} changeEvent={(data: string) => handleProfileCardInfo(data)} info={profileCardInfo} currentTab={tab} changeTab={(data: any) => changeTab(data)} changeBoardStatus={changeBoardStatus}></ModalEditProfile></Modal> : null
             }          
         </Wrapper>
     );

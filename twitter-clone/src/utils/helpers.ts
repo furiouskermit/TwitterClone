@@ -1,6 +1,5 @@
-import { deleteDoc, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { auth, db, storage } from "../firebase";
-import { deleteObject, ref } from "firebase/storage";
+import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
 // check text max length
 export function checkMaxLength(value: string, maxLength: number, handler: any) {
@@ -21,22 +20,6 @@ export function convertDateYYYYMMDD(value: number | string) {
     const date = new Date(Number(value));
     const convertDate = `${date.getFullYear()}-${convertNumber(date.getMonth()+1)}-${convertNumber(date.getDate())}`
     return convertDate;
-};
-
-export const deleteDocument = async(collection: string, docId: string, file: any) => {
-    const user = auth.currentUser;
-    const confirmText = confirm("Are you sure you want to delete post?");
-    if(!user || !confirmText) return;
-
-    try {
-        await deleteDoc(doc(db, collection, docId));
-        if(file) {
-            const photoRef = ref(storage, `${collection}/${user.uid}/${docId}`);
-            await deleteObject(photoRef);
-        }
-    } catch(e) {
-        console.log(e);
-    }
 };
 
 // update documents in "users" collection

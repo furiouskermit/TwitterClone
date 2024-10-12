@@ -68,11 +68,29 @@ export const PostTweetBtn = styled.input`
     border-radius: 50px;
 `;
 
-export const TweetsHeader = styled.div`
+export const TweetsHeader = styled.div``;
+export const TweetsBody = styled.div`
+    margin: 10px 0 0;
+`;
+export const TweetsFooter = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: 10px 0 0;
 `;
+export const TweetsActionBtn = styled.button`
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    & svg {
+        width: 18px;
+        &.liked {
+            color: tomato;
+        }
+    }
+`;
+export const LikedNumber = styled.span``;
 export const EditArea = styled.div`
     display: flex;
     align-items: center;
@@ -86,28 +104,10 @@ export const EditAreaBtn = styled.button`
         background-color: var(--border-color);
     }
     & svg {
-        width: 20px;
+        width: 18px;
         color: var(--text-muted);
     }
 `;
-export const TweetsBody = styled.div`
-    margin: 10px 0 0;
-`;
-export const TweetsFooter = styled.div`
-    margin: 10px 0 0;
-`;
-export const TweetsActionBtn = styled.button`
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    & svg {
-        width: 20px;
-        &.liked {
-            color: tomato;
-        }
-    }
-`;
-export const LikedNumber = styled.span``;
 
 export const TextMaxLength = styled.div`
     position: absolute;

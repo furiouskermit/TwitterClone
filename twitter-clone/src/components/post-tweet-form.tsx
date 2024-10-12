@@ -58,7 +58,7 @@ export default function PostTweetForm(){
                 tweet,
                 createdAt: Date.now(),
                 userId: user.uid,
-                userEmail: user.email?.split("@")[0],
+                userEmail: user.email,
                 username: user.displayName,
                 liked: [],
                 userThumbnail: (!user.photoURL || user.photoURL === "") ? "/profile/user/UserImg01.png" : user.photoURL

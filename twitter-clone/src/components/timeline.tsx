@@ -97,7 +97,7 @@ export default function Timeline(){
                         <UserThumbnail><UserAvatar src={tweet.userThumbnail === "" ? "/profile/user/UserImg01.png" : tweet.userThumbnail} /></UserThumbnail>
                         <UserInfo>
                             <UserName>{tweet.username === "" ? "Anonymous" : tweet.username}</UserName>
-                            <UserId className="text-muted">@{tweet.userEmail}</UserId>
+                            <UserId className="text-muted">{tweet.userEmail}</UserId>
                             <PostingDate className="text-muted">{convertDateYYYYMMDD(tweet.createdAt)}</PostingDate>
                         </UserInfo>
                     </UserItem>

@@ -23,7 +23,7 @@ export default function User(props:any){
             <UserThumbnail><UserAvatar src={userThumbnail === "" ? "/profile/user/UserImg01.png" : userThumbnail} /></UserThumbnail>
             <UserInfo>
                 <UserName>{ userName === "" ? "Anonymous" : userName }</UserName>
-                <UserId className="text-muted">@{ email === "" ? user?.email?.split('@')[0] : email }</UserId>
+                <UserId className="text-muted">{ email === "" ? user?.email : email }</UserId>
                 {
                     date === "" ? null : <PostingDate className="text-muted">{postingDate}</PostingDate>
                 }

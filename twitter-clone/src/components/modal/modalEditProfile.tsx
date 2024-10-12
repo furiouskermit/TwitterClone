@@ -276,40 +276,7 @@ export default function ModalEditProfile(props: any){
                     }
                 });
 
-                const tweetInfo = tweetDoc.docs.map((item) => {
-                    if(item.data()){
-                        if(props.currentTab === "tweets") {
-                            const { tweet, photo, createdAt, userId, username, userThumbnail, userEmail, liked } = item.data();
-                            return {
-                                id: item.id,
-                                tweet,
-                                photo: photo ? photo : null,
-                                createdAt: convertDateYYYYMMDD(createdAt),
-                                userId,
-                                username: username !== newName ? newName : username,
-                                userThumbnail: userThumbnail !== newUserImg ? newUserImg : userThumbnail,
-                                userEmail,
-                                liked
-                            };
-                        } else if(props.currentTab === "screenshots") {
-                            const { comment, hashtag, photo, createdAt, userId, username, userThumbnail, userEmail, liked } = item.data();
-                            return {
-                                id: item.id,
-                                comment,
-                                hashtag,
-                                photo,
-                                createdAt,
-                                userId,
-                                username,
-                                userThumbnail,
-                                userEmail,
-                                liked,
-                            }
-                        }
-                    };
-                });
-
-                props.changeBoard(tweetInfo);
+                props.changeBoardStatus();
             }
 
             // if user's profile data is not stored in firestore, use setDoc()

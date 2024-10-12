@@ -146,7 +146,7 @@ export default function Layout(){
                         <UserThumbnail><UserAvatar src={globalUserInfo?.photoURL ?? "/profile/user/UserImg01.png"} /></UserThumbnail>
                         <UserInfo>
                             <UserName>{ globalUserInfo.displayName ?? "Anonymous" }</UserName>
-                            <UserId className="text-muted">@{ user?.email?.split('@')[0] }</UserId>
+                            <UserId className="text-muted">{ user?.email?.split('@')[0] }</UserId>
                         </UserInfo>
                     </UserItem>
                     <Menu>

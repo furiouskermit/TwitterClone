@@ -71,7 +71,7 @@ export default function PostScreenshotsForm(props: any){
                     createdAt: Date.now(),
                     userId: user.uid,
                     userThumbnail: user.photoURL,
-                    userEmail: user.email?.split("@")[0],
+                    userEmail: user.email,
                     username: user.displayName,
                     comment,
                     liked: [],
@@ -96,28 +96,8 @@ export default function PostScreenshotsForm(props: any){
                 photo: photoLink
             });
 
-            if(Object.keys(props).length > 0 && props.changeBoard) {
-                const docQuery = query(
-                    collection(db, "screenshots"),
-                    orderBy("createdAt", "desc"),
-                    where("userId", "==", user.uid)
-                );
-                const updatedDocs = await getDocs(docQuery);
-                const docsData = updatedDocs.docs.map((doc) => {
-                    const { comment, hashtag, photo, createdAt, userId, username, userThumbnail, liked } = doc.data();
-                    return {
-                        id: doc.id,
-                        comment,
-                        hashtag,
-                        photo,
-                        createdAt,
-                        userId,
-                        username,
-                        userThumbnail,
-                        liked
-                    };
-                })
-                props.changeBoard(docsData);
+            if(Object.keys(props).length > 0 && props.changeBoardStatus) {
+                props.changeBoardStatus();
             }
         } catch(e) {
             console.log(e);
@@ -140,7 +120,7 @@ export default function PostScreenshotsForm(props: any){
             <PostForm onSubmit={submitForm}>
                 {
                     Object.keys(props).length === 0 ?
-                    <User thumbnail={user?.photoURL ?? ""} email={user?.email?.split("@")[0]} name={user?.displayName ?? ""} date="" />
+                    <User thumbnail={user?.photoURL ?? ""} email={user?.email} name={user?.displayName ?? ""} date="" />
                     : null
                 }
                 <PostScreenshots>
@@ -178,7 +158,7 @@ export default function PostScreenshotsForm(props: any){
                         <PostFormItem>
                             <PostFormItemTitle>HASHTAG</PostFormItemTitle>
                             <PostFormItemContent>
-                                <PostScreenshotInput type="text" name="hashtag" onChange={changeValue} value={hashtag} placeholder="#keyword" />
+                                <PostScreenshotInput type="text" name="hashtag" onChange={changeValue} value={hashtag} placeholder="keyword" />
                                 
                                 <InfoText>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
