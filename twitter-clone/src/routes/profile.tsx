@@ -365,7 +365,7 @@ export default function Profile(){
                             board.map((boardItem: any) =>
                                 <Tweet key={`profile_${boardItem.id}`} {...boardItem} changeBoardStatus={changeBoardStatus}>
                                     <UserItem className="user">
-                                        <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
+                                        <UserThumbnail><UserAvatar src={(!boardItem.userThumbnail || boardItem.userThumbnail === "") ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
                                         <UserInfo>
                                             <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
                                             <UserId className="text-muted">{boardItem.userEmail}</UserId>
@@ -379,7 +379,7 @@ export default function Profile(){
                             board.map((boardItem: any) => 
                                 <TweetScreenshots key={`profile_${boardItem.id}`} {...boardItem} changeBoardStatus={changeBoardStatus}>
                                     <UserItem className="user">
-                                        <UserThumbnail><UserAvatar src={boardItem.userThumbnail === "" ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
+                                        <UserThumbnail><UserAvatar src={(!boardItem.userThumbnail || boardItem.userThumbnail === "") ? "/profile/user/UserImg01.png" : boardItem.userThumbnail} /></UserThumbnail>
                                         <UserInfo>
                                             <UserName>{boardItem.username === "" ? "Anonymous" : boardItem.username}</UserName>
                                             <UserId className="text-muted">{boardItem.userEmail}</UserId>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { auth, db, storage } from "../firebase";
-import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { arrayRemove, arrayUnion, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
 import { BtnArea, DeleteTweetImg, EditArea, EditAreaBtn, FileArea, FileInput, FileLabel, LikedNumber, PostForm, PostTweet, PostTweetBtn, PostTweetImg, TweetImg, TweetsActionBtn, TweetsBody, TweetsFooter, TweetsHeader } from "../css/tweet-components";

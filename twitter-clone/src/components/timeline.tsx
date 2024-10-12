@@ -94,7 +94,7 @@ export default function Timeline(){
                 tweets.map((tweet) =>
                 <Tweet key={tweet.id} {...tweet}>
                     <UserItem className="user">
-                        <UserThumbnail><UserAvatar src={tweet.userThumbnail === "" ? "/profile/user/UserImg01.png" : tweet.userThumbnail} /></UserThumbnail>
+                        <UserThumbnail><UserAvatar src={(!tweet.userThumbnail || tweet.userThumbnail === "") ? "/profile/user/UserImg01.png" : tweet.userThumbnail} /></UserThumbnail>
                         <UserInfo>
                             <UserName>{tweet.username === "" ? "Anonymous" : tweet.username}</UserName>
                             <UserId className="text-muted">{tweet.userEmail}</UserId>
